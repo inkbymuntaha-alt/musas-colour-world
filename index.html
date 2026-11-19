@@ -50,7 +50,9 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
   <section><h3>Brush size <span id="sizeLabel">18</span></h3><input class="range" id="size" type="range" min="5" max="55" value="18"></section>
   <section><h3>🐾 Colouring pages</h3><div class="categories" id="categories"></div></section>
   <section class="bottom-tools"><button class="btn" id="clear">Clear page</button><button class="btn" id="random">Surprise me ✨</button></section>
-  <div class="hint">🎨 Colour every part of your picture to unlock a surprise celebration!</div>
+  <button class="btn wow-trigger" id="wowCelebrate">🎉 WOW! Celebrate!</button>
+  <div class="wow-tip" id="wowTip"><strong>💡 WOW tip</strong><span id="wowTipText">Try two shades of green to make your tree look magical!</span><button class="btn" id="nextTip" style="margin-top:9px">Another tip ✨</button></div>
+  <div class="hint">🎨 Colour every part, then celebrate your masterpiece!</div>
 </aside>
 </main>
 <div id="celebration" role="dialog" aria-modal="true" aria-label="Colouring celebration"><div id="confetti"></div><div class="celebrate-card"><span class="trophy">🏆🌈</span><div class="wow">WOW!!!</div><p>Your masterpiece is AMAZING!</p><div style="font-size:38px">👏 👏 👏</div><p style="font-size:17px">You are a super artist!</p><button class="btn primary" id="celebrateClose">Keep creating 💖</button></div></div>
