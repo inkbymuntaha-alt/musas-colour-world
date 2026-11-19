@@ -105,6 +105,7 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
 }
 @media(max-width:850px){main{grid-template-columns:1fr;padding:6px 10px 18px}.stage-card{min-height:55vh}.canvas-wrap{min-height:380px}#art{min-height:380px;max-height:60vh}.tools{display:grid;grid-template-columns:1fr 1fr;gap:14px}.tools .hint{grid-column:1/-1}.tools .palette{grid-template-columns:repeat(5,minmax(0,1fr))}}
 @media(max-width:520px){header{padding:9px 12px;height:auto}.brand p{display:none}.top-actions .btn{padding:8px;font-size:11px}main{display:flex;flex-direction:column}.stage-card{min-height:440px;padding:9px}.canvas-wrap{min-height:360px}#art{min-height:360px}.tools{display:flex}.tools .palette{grid-template-columns:repeat(5,minmax(0,1fr))}}
+ .palette{max-height:190px;overflow-y:auto;overscroll-behavior:contain;padding:5px;grid-template-columns:repeat(8,minmax(0,1fr))}.swatch{background-size:100% 100%;position:relative}.swatch::after{content:'✦';position:absolute;inset:0;display:grid;place-items:center;color:#ffffffb8;text-shadow:0 1px 2px #3338;font-size:13px;pointer-events:none}
 </style>
 </head>
 <body>
@@ -119,7 +120,7 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
   <div class="canvas-wrap"><svg id="art" viewBox="0 0 800 600" role="img" aria-label="Colouring picture"></svg></div>
  </section>
  <aside class="tools">
-  <section class="control-panel"><h3>🌈 Choose a colour</h3><div class="palette" id="palette"></div></section>
+  <section class="control-panel"><h3>✨ 120 Real Glitter Colours</h3><div class="palette" id="palette"></div></section>
   <section class="control-panel"><h3>🖌️ Painting tools</h3><div class="toolrow"><button class="tool active" data-tool="fill">🪣 Fill</button><button class="tool" data-tool="brush">🖍️ Brush</button><button class="tool" data-tool="eraser">🧽 Eraser</button></div></section>
   <section><h3>Brush size <span id="sizeLabel">18</span></h3><input class="range" id="size" type="range" min="5" max="55" value="18"></section>
   <section class="control-panel"><h3>🐾 Colouring pages</h3><div class="categories" id="categories"></div></section>
@@ -133,7 +134,8 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
 <div id="celebration" role="dialog" aria-modal="true" aria-label="Colouring celebration"><div id="confetti"></div><div class="celebrate-card"><span class="trophy">🏆🌈</span><div class="wow">WOW!!!</div><p>Your masterpiece is AMAZING!</p><div style="font-size:38px">👏 👏 👏</div><p style="font-size:17px">You are a super artist!</p><p id="rewardText" style="font-size:16px;font-weight:800;color:#7650bd">Keep colouring to earn stars!</p><button class="btn primary" id="celebrateClose">Keep creating 💖</button></div></div>
 <div id="trophyRoom" role="dialog" aria-modal="true" aria-label="My Trophy Room"><div class="trophy-card"><div class="trophy-head"><h2>🏆 My Trophy Room</h2><button class="btn" id="closeTrophies" aria-label="Close trophy room">✕</button></div><p class="trophy-summary" id="trophySummary">Your creative journey starts here!</p><h3>🌟 Achievement stickers</h3><div class="sticker-grid" id="stickerGrid"></div><h3 style="margin-top:20px">🎨 My finished pictures</h3><div class="sticker-gallery" id="stickerGallery"></div><p style="font-size:12px;color:#77718e;margin:14px 2px 2px">Keep colouring to unlock every sticker. Your collection is saved on this device.</p></div></div>
 <script>
-const colors=['#f44336','#ff8a00','#ffd52a','#7ac943','#20bfa9','#29a8e8','#4264d9','#9163d9','#e85bb4','#ffb7c8','#8b5a3c','#7d8798','#222222','#ffffff','#f6d6a8'];
+const colors=Array.from({length:120},(_,i)=>'hsl('+((i*3)%360)+' '+[72,82,92][i%3]+'% '+[34,44,54,64][Math.floor(i/3)%4]+'%)');
+function glitterFill(color){return 'url(#glitter-'+Math.max(0,colors.indexOf(color))+')'}
 let chosen=colors[0],tool='fill',size=18,selected=null,strokes=[],undoStack=[],redoStack=[],current='lion',celebrationShown=false,celebrationTimer=null;
 const pages=[
 {id:'lion',name:'Little Lion',emoji:'🦁',regions:[['mane','M400 80 Q570 70 600 230 Q680 370 520 470 Q400 560 270 460 Q110 350 205 190 Q260 70 400 80Z'],['face','M300 190 Q400 130 500 190 L520 330 Q500 430 400 440 Q300 430 280 330Z'],['muzzle','M340 320 Q400 285 460 320 Q470 380 400 390 Q330 380 340 320Z'],['earL','M285 205 Q230 145 250 250Z'],['earR','M515 205 Q570 145 550 250Z'],['body','M310 430 Q400 400 490 430 L510 520 H290Z']]},
@@ -303,7 +305,10 @@ document.getElementById('zoomOut').addEventListener('click',()=>{zoomLevel=Math.
 document.getElementById('zoomReset').addEventListener('click',()=>{zoomLevel=1;updateZoom()});
 window.addEventListener('keydown',e=>{if(e.target&&['INPUT','TEXTAREA'].includes(e.target.tagName))return;if(e.key==='+'||e.key==='='){zoomLevel=Math.min(3,zoomLevel+.25);updateZoom()}else if(e.key==='-'){zoomLevel=Math.max(1,zoomLevel-.25);updateZoom()}else if(e.key==='0'){zoomLevel=1;updateZoom()}});
 function buildPage(id){current=id;const page=pages.find(p=>p.id===id);document.getElementById('pictureTitle').textContent=page.name;const svg=document.getElementById('art');svg.replaceChildren();
-const defs=svgEl('defs');svg.append(defs);const bg=svgEl('rect',{x:0,y:0,width:800,height:600,fill:'#fff'});svg.append(bg);
+const defs=svgEl('defs');svg.append(defs);
+const shine=svgEl('linearGradient',{id:'glitterShine',x1:'0',y1:'0',x2:'1',y2:'1'});shine.append(svgEl('stop',{offset:'0%','stop-color':'#ffffff','stop-opacity':'.65'}),svgEl('stop',{offset:'45%','stop-color':'#ffffff','stop-opacity':'0'}),svgEl('stop',{offset:'100%','stop-color':'#ffffff','stop-opacity':'.35'}));defs.append(shine);
+colors.forEach((color,i)=>{const pat=svgEl('pattern',{id:'glitter-'+i,patternUnits:'userSpaceOnUse',width:26,height:26});pat.append(svgEl('rect',{x:0,y:0,width:26,height:26,fill:color}),svgEl('rect',{x:0,y:0,width:26,height:26,fill:'url(#glitterShine)',opacity:'.65'}));for(let j=0;j<9;j++){const x=(i*7+j*11)%26,y=(i*13+j*5)%26,r=j%3===0?2.1:1.15;pat.append(svgEl('path',{d:'M '+x+' '+(y-r)+' L '+(x+r*.55)+' '+y+' L '+x+' '+(y+r)+' L '+(x-r*.55)+' '+y+'Z',fill:'#ffffff',opacity:j%3===0?'.95':'.7'}))}defs.append(pat)});
+const bg=svgEl('rect',{x:0,y:0,width:800,height:600,fill:'#fff'});svg.append(bg);
 const rg=svgEl('g',{id:'regions'}),sg=svgEl('g',{id:'paintStrokes'}),og=svgEl('g',{id:'outlines'});svg.append(rg,sg,og);
 page.regions.forEach(([name,d])=>{const clip=svgEl('clipPath',{id:'clip-'+name,clipPathUnits:'userSpaceOnUse'});clip.append(svgEl('path',{d}));defs.append(clip);
 const p=svgEl('path',{d,id:'region-'+name,class:'region',fill:'#ffffff','pointer-events':'all'});rg.append(p);og.append(svgEl('path',{d,class:'outline'}));});
@@ -323,7 +328,7 @@ strokes=[];undoStack=[];redoStack=[];selected=null;celebrationShown=false;hideCe
 function eraseRegion(el){if(!el)return;const name=el.id.replace('region-','');if(!name)return;const wasColoured=(el.getAttribute('fill')||'').toLowerCase()!=='#ffffff'||strokes.some(x=>x.region===name);if(!wasColoured)return;el.setAttribute('fill','#ffffff');strokes=strokes.filter(x=>x.region!==name);renderStrokes();celebrationShown=false;saveCurrentPainting()}
 function regionAtPoint(e){const p=point(e),all=[...document.querySelectorAll('#regions .region')];for(let i=all.length-1;i>=0;i--){try{if(all[i].isPointInFill(p))return all[i]}catch(err){}}return null}
 let erasing=false,eraseSnapshotTaken=false,lastErasedRegion='';
-function onRegionDown(e,name,el,d){e.preventDefault();selected=name;if(tool==='fill'){snapshot();el.setAttribute('fill',chosen);saveCurrentPainting();checkFinished();return}if(tool==='eraser'){if(!eraseSnapshotTaken){snapshot();eraseSnapshotTaken=true}erasing=true;lastErasedRegion=name;eraseRegion(el);try{e.currentTarget.setPointerCapture(e.pointerId)}catch(err){}return}startStroke(e,name,d)}
+function onRegionDown(e,name,el,d){e.preventDefault();selected=name;if(tool==='fill'){snapshot();el.setAttribute('fill',glitterFill(chosen));saveCurrentPainting();checkFinished();return}if(tool==='eraser'){if(!eraseSnapshotTaken){snapshot();eraseSnapshotTaken=true}erasing=true;lastErasedRegion=name;eraseRegion(el);try{e.currentTarget.setPointerCapture(e.pointerId)}catch(err){}return}startStroke(e,name,d)}
 document.getElementById('art').addEventListener('pointerdown',e=>{const direct=e.target.closest?.('.region');const el=direct||regionAtPoint(e);if(!el)return;const name=el.id.replace('region-','');const page=pages.find(p=>p.id===current);const region=page.regions.find(r=>r[0]===name);if(region)onRegionDown(e,name,el,region[1])});
 document.getElementById('art').addEventListener('pointermove',e=>{if(!erasing||tool!=='eraser')return;const direct=document.elementFromPoint(e.clientX,e.clientY)?.closest?.('.region');const el=direct||regionAtPoint(e);if(el&&el.id!==lastErasedRegion){lastErasedRegion=el.id;eraseRegion(el)}});
 function endErase(){erasing=false;eraseSnapshotTaken=false;lastErasedRegion=''}
@@ -332,13 +337,13 @@ document.getElementById('art').addEventListener('pointercancel',endErase);
 window.addEventListener('pointerup',endErase);
 let drawing=null;
 function point(e){const svg=document.getElementById('art'),pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
-function startStroke(e,name,d,alreadySaved=false){const p=point(e),el=document.getElementById('region-'+name);if(!el.isPointInFill(p))return;if(!alreadySaved)snapshot();drawing={region:name,color:tool==='eraser'?'#ffffff':chosen,width:size,d:'M '+p.x+' '+p.y};strokes.push(drawing);document.getElementById('art').setPointerCapture(e.pointerId);renderStrokes()}
+function startStroke(e,name,d,alreadySaved=false){const p=point(e),el=document.getElementById('region-'+name);if(!el.isPointInFill(p))return;if(!alreadySaved)snapshot();drawing={region:name,color:tool==='eraser'?'#ffffff':glitterFill(chosen),width:size,d:'M '+p.x+' '+p.y};strokes.push(drawing);document.getElementById('art').setPointerCapture(e.pointerId);renderStrokes()}
 document.getElementById('art').addEventListener('pointermove',e=>{if(!drawing)return;const p=point(e),el=document.getElementById('region-'+drawing.region);if(el.isPointInFill(p)){drawing.d+=' L '+p.x+' '+p.y;renderStrokes()}});
 function endDraw(){if(drawing){drawing=null;saveCurrentPainting();checkFinished()}}
 document.getElementById('art').addEventListener('pointerup',endDraw);document.getElementById('art').addEventListener('pointercancel',endDraw);
 function setTool(t){tool=t;document.querySelectorAll('.tool').forEach(b=>b.classList.toggle('active',b.dataset.tool===t));document.getElementById('art').style.cursor=t==='eraser'?'cell':t==='brush'?'crosshair':'pointer';document.getElementById('tipText').textContent=t==='eraser'?'🧽 Tap a coloured section to erase it':t==='brush'?'🖍️ Draw inside a section':'✨ Tap a part to colour it!';}
 document.querySelectorAll('.tool').forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
-const pal=document.getElementById('palette');colors.forEach(c=>{const b=document.createElement('button');b.className='swatch';b.style.background=c;b.title=c;b.setAttribute('aria-label','Choose '+c);b.addEventListener('click',()=>{chosen=c;document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));b.classList.add('active')});pal.append(b)});pal.firstChild.classList.add('active');
+const pal=document.getElementById('palette');colors.forEach(c=>{const b=document.createElement('button');b.className='swatch';b.style.background='radial-gradient(circle at 25% 25%,rgba(255,255,255,.95) 0 1px,transparent 2px),radial-gradient(circle at 72% 65%,rgba(255,255,255,.9) 0 1px,transparent 2px),linear-gradient(135deg,'+c+','+c+')';b.title='Glitter colour '+(colors.indexOf(c)+1);b.setAttribute('aria-label','Choose glitter colour '+(colors.indexOf(c)+1));b.addEventListener('click',()=>{chosen=c;document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));b.classList.add('active')});pal.append(b)});pal.firstChild.classList.add('active');
 document.getElementById('size').addEventListener('input',e=>{size=+e.target.value;document.getElementById('sizeLabel').textContent=size});
 const cats=document.getElementById('categories');pages.forEach(p=>{const b=document.createElement('button');b.className='category';b.textContent=p.emoji+' '+p.name;b.addEventListener('click',()=>{buildPage(p.id);document.querySelectorAll('.category').forEach(x=>x.classList.remove('active'));b.classList.add('active')});cats.append(b)});
 
@@ -374,7 +379,7 @@ function resetPage(){snapshot();document.querySelectorAll('.region').forEach(x=>
 document.getElementById('clear').onclick=resetPage;
 document.getElementById('reset').onclick=resetPage;
 document.getElementById('random').onclick=()=>{const p=pages[Math.floor(Math.random()*pages.length)];buildPage(p.id);activePageButton()};
-function makeArtFile(){const clone=document.getElementById('art').cloneNode(true);clone.setAttribute('xmlns','http://www.w3.org/2000/svg');return new Blob([new XMLSerializer().serializeToString(clone)],{type:'image/svg+xml'})}
+function makeArtFile(){const clone=document.getElementById('art').cloneNode(true);clone.setAttribute('xmlns','http://www.w3.org/2000/svg');clone.setAttribute('viewBox','0 0 800 600');clone.setAttribute('width','800');clone.setAttribute('height','600');return new Blob([new XMLSerializer().serializeToString(clone)],{type:'image/svg+xml'})}
 function downloadBlob(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),3000)}
 function downloadArt(){downloadBlob(makeArtFile(),'musas-colour-world-'+current+'.svg')}
 async function makePngFile(){const svgBlob=makeArtFile(),url=URL.createObjectURL(svgBlob);try{const img=new Image();img.decoding='async';await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url});const canvas=document.createElement('canvas');canvas.width=1600;canvas.height=1200;const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);const png=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('PNG conversion failed')),'image/png'));return new File([png],'musas-colour-world-'+current+'.png',{type:'image/png'})}finally{URL.revokeObjectURL(url)}}
