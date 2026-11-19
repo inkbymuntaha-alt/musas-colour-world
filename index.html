@@ -54,6 +54,7 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
   <button class="btn" id="finish">🎉 I’m finished! Celebrate!</button><div class="hint">Fill every part to trigger a surprise celebration, or tap “I’m finished!” when your masterpiece is ready.</div>
 </aside>
 </main>
+<div id="celebration" role="dialog" aria-modal="true" aria-label="Colouring celebration"><div id="confetti"></div><div class="celebrate-card"><span class="trophy">🏆🌈</span><div class="wow">WOW!!!</div><p>Your masterpiece is AMAZING!</p><div style="font-size:38px">👏 👏 👏</div><p style="font-size:17px">You are a super artist!</p><button class="btn primary" id="celebrateClose">Keep creating 💖</button></div></div>
 <script>
 const colors=['#f44336','#ff8a00','#ffd52a','#7ac943','#20bfa9','#29a8e8','#4264d9','#9163d9','#e85bb4','#ffb7c8','#8b5a3c','#7d8798','#222222','#ffffff','#f6d6a8'];
 let chosen=colors[0],tool='fill',size=18,selected=null,strokes=[],undoStack=[],redoStack=[],current='puppy',celebrationShown=false,celebrationTimer=null;
