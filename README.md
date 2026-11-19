@@ -1,26 +1,27 @@
 # Musa's Colour World
 
-An original, iPad-friendly colouring game built with HTML, CSS and vanilla JavaScript.
+A free, original, iPad-friendly colouring game made with HTML, CSS and vanilla JavaScript.
 
-## Play it
-Open **[index.html](./index.html)** in a browser, or enable GitHub Pages for this repository to publish it as a website.
+## Play
 
-## Controls
-- **Fill:** tap an outlined section to colour only that section.
-- **Brush:** choose Brush, then draw inside a section. Brush marks are clipped to that section.
-- **Eraser:** use Eraser to restore a section or brush marks to white.
-- **Undo / Redo:** step backward and forward through painting actions.
-- **Save art:** download the current picture as an SVG file.
-- **Brush size:** adjust the brush width with the slider.
+Open the [live game](https://inkbymuntaha-alt.github.io/musas-colour-world/).
 
-## Included original colouring pages
-Happy Puppy, Curious Kitty, Garden Butterfly, Wonderful Tree, Little Fish, Space Rocket, Sunny Flower and Dream Castle.
+## What's included
 
-## Design notes
-- Responsive layout: picture canvas on the left and colour tools on the right on wide screens; stacked layout on smaller screens.
-- SVG-based regions keep fills and brush strokes inside their selected shapes.
-- Black outline artwork is rendered above the paint.
-- Supports touch, mouse and Apple Pencil input through Pointer Events.
+- **500 colouring pages**: 25 hand-drawn starter pictures plus 475 deterministic, original SVG variations across 25 cute themes.
+- **Fill, brush and eraser** with SVG region clipping and crisp outlines.
+- **Undo, redo, reset, zoom and touch / Apple Pencil pointer input**.
+- **Automatic finish celebration** with confetti, applause sounds and varied Hindi voice cheers.
+- **Progress stars and trophy room** saved on the device.
+- **Autosave per picture**, so paintings are restored after a refresh.
+- **Save as SVG** and **share/export as PNG** where the browser supports it.
+- **Installable PWA** with an offline app shell after the first successful load.
+- Responsive layout for phones, tablets and larger screens.
 
-## Next development milestones
-Add more original page packs, richer illustrations and sounds, progress/bookmarks, optional guided colouring, and an installable offline PWA build.
+## Privacy and dependencies
+
+The game has no sign-in, analytics, ads or third-party JavaScript dependencies. Painting progress and artwork are stored locally in the browser on the device. Clearing browser site data also clears locally saved progress.
+
+## Run locally
+
+Open `index.html` in a modern browser. For service-worker/offline installation features, serve the folder over HTTPS or localhost.
