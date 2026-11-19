@@ -30,6 +30,24 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
 .confetti-piece{position:absolute;top:-25px;width:11px;height:17px;border-radius:4px;animation:confettiFall var(--fall) linear forwards;transform:rotate(var(--turn))}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes pop{from{transform:scale(.55) rotate(-7deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
 @keyframes confettiFall{to{transform:translate3d(var(--drift),110vh,0) rotate(760deg);opacity:.9}}
+/* Give the three main control panels one consistent, full-width card size */
+.tools>section:nth-child(1),
+.tools>section:nth-child(2),
+.tools>section:nth-child(4){
+ width:100%;
+ min-width:0;
+ box-sizing:border-box;
+ padding:12px;
+ border:1.5px solid #edf0f8;
+ border-radius:16px;
+ background:linear-gradient(145deg,#fff 0%,#fbfaff 100%);
+}
+.tools>section:nth-child(1),
+.tools>section:nth-child(2){min-height:116px}
+.tools>section:nth-child(4){min-height:150px}
+.tools>section:nth-child(1) .palette{max-width:100%}
+.tools>section:nth-child(2) .toolrow{width:100%}
+.tools>section:nth-child(4) .categories{width:100%}
 /* Compact controls so the colour and page pickers fit comfortably on every screen */
 .tools{min-width:0;max-height:calc(100vh - 100px);overflow-y:auto;overscroll-behavior:contain;padding:14px;gap:11px}
 .tools section{min-width:0}
