@@ -8,7 +8,7 @@ Open the [live game](https://inkbymuntaha-alt.github.io/musas-colour-world/).
 
 ## What's included
 
-- **500 colouring pages**: 25 hand-drawn starter pictures plus 475 deterministic, original SVG variations across 25 cute themes.
+- **500 colouring pages**: 21 hand-drawn starter pictures plus 479 deterministic, original SVG variations across 25 cute themes.
 - **Fill, brush and eraser** with SVG region clipping and crisp outlines.
 - **Undo, redo, reset, zoom and touch / Apple Pencil pointer input**.
 - **Automatic finish celebration** with confetti, applause sounds and varied Hindi voice cheers.
