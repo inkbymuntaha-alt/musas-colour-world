@@ -193,7 +193,81 @@ const pages=[
 {id:'bird',name:'Rainbow Songbird',emoji:'🐦',regions:[['body','M180 300 Q230 140 430 180 Q560 210 570 330 Q520 470 340 440 Q190 420 180 300Z'],['wing','M260 300 Q350 190 470 280 Q440 390 300 390Z'],['tail','M540 300 L690 220 L660 350 L700 430 L550 380Z'],['beak','M560 260 L680 300 L560 330Z'],['belly','M270 360 Q390 420 510 350 Q490 460 370 455 Q290 440 270 360Z'],['feet','M350 430 L340 500 M430 440 L440 500']]},
 {id:'pine',name:'Tall Pine Tree',emoji:'🌲',regions:[['top','M400 45 L530 220 H460 L570 355 H470 L590 480 H210 L330 355 H230 L340 220 H270Z'],['trunk','M360 450 H440 V550 H360Z'],['star','M400 20 L415 45 L445 48 L423 68 L430 95 L400 80 L370 95 L377 68 L355 48 L385 45Z']]},
 {id:'appletree',name:'Apple Blossom Tree',emoji:'🍎',regions:[['trunk','M350 300 Q400 270 450 300 L475 540 H325Z'],['crown1','M400 65 Q500 45 530 155 Q650 145 610 270 Q590 360 480 340 Q400 410 320 340 Q190 365 190 245 Q185 145 285 145 Q300 55 400 65Z'],['crown2','M280 210 Q340 155 395 220 Q430 300 335 325 Q250 315 280 210Z'],['crown3','M425 190 Q515 140 560 225 Q575 310 475 325 Q405 285 425 190Z'],['apple1','M320 180 Q345 145 370 180 Q400 145 425 180 Q425 230 370 250 Q320 230 320 180Z'],['apple2','M470 265 Q495 230 520 265 Q550 235 570 270 Q570 315 520 335 Q470 315 470 265Z']]}
+
 ];
+
+// Add 475 deterministic, original variations to make a 500-page library.
+const generatedThemes=[
+ ['Storybook Puppy','🐕','creature'],['Dream Kitty','🐈','creature'],['Cuddly Bear','🐻','creature'],
+ ['Magic Bunny','🐇','creature'],['Clever Fox','🦊','creature'],['Little Panda','🐼','creature'],
+ ['Royal Lion','🦁','creature'],['Gentle Elephant','🐘','creature'],['Sunny Giraffe','🦒','creature'],
+ ['Dino Buddy','🦕','creature'],['Tiny Turtle','🐢','creature'],['Happy Whale','🐳','creature'],
+ ['Rainbow Fish','🐠','winged'],['Songbird','🐦','winged'],['Garden Butterfly','🦋','winged'],
+ ['Buzzy Bee','🐝','winged'],['Ladybug Pal','🐞','winged'],['Sleepy Owl','🦉','winged'],
+ ['Unicorn Dream','🦄','creature'],['Friendly Dragon','🐉','creature'],
+ ['Blooming Flower','🌺','plant'],['Magic Tree','🌳','plant'],['Mushroom Cottage','🍄','building'],
+ ['Star Rocket','🚀','ride'],['Sweet Cupcake','🧁','treat']
+];
+function generatedRegions(kind,v){
+ const a=(v%7)*5,b=(v%5)*4,c=(v%3)*7;
+ if(kind==='creature')return [
+  ['body',`M${255-a} 315 Q${245-a} ${180+b} 400 ${185+c} Q${555+a} ${175+b} ${545+a} 320 L${510+a} 465 Q400 ${505+c} ${290-a} 465Z`],
+  ['head',`M${300-a} ${225+b} Q${285-a} 95 ${400+c} ${100+b} Q${530+a} 95 ${510+a} ${230+b} Q${505+a} 350 400 ${355+c} Q${295-a} 345 ${300-a} ${225+b}Z`],
+  ['earL',`M${320-a} 150 Q${245-a} ${55+b} ${275-a} 35 Q${350-a} 50 ${360-a} 145Z`],
+  ['earR',`M${440+a} 145 Q${455+a} 50 ${525+a} 35 Q${555+a} ${65+b} ${480+a} 150Z`],
+  ['belly',`M${330-a} 365 Q400 ${330+b} ${470+a} 365 L${455+a} 465 Q400 ${490+c} ${345-a} 465Z`],
+  ['tail',`M${520+a} 365 Q${650+a} ${300+b} ${665+a} 395 Q${660+a} 470 ${590+a} 430Z`],
+  ['legL',`M${300-a} 425 H${365-a} L${360-a} 535 H${285-a}Z`],
+  ['legR',`M${435+a} 425 H${500+a} L${515+a} 535 H${440+a}Z`]
+ ];
+ if(kind==='winged')return [
+  ['wingL',`M390 260 Q${260-a} ${75+b} ${125-a} ${155+c} Q${65-a} 280 ${365-a} 340Z`],
+  ['wingR',`M410 260 Q${540+a} ${75+b} ${675+a} ${155+c} Q${735+a} 280 ${435+a} 340Z`],
+  ['wingBottomL',`M380 315 Q${210-a} 285 ${170-a} 430 Q${205-a} 545 ${370-a} 385Z`],
+  ['wingBottomR',`M420 315 Q${590+a} 285 ${630+a} 430 Q${595+a} 545 ${430+a} 385Z`],
+  ['body',`M390 205 Q400 180 410 205 L${420+c} 420 Q400 455 ${380-c} 420Z`],
+  ['spotL',`M${265-a} 220 Q${300-a} 185 ${330-a} 220 Q${330-a} 260 ${290-a} 265Z`],
+  ['spotR',`M${470+a} 220 Q${500+a} 185 ${535+a} 220 Q${510+a} 265 ${475+a} 260Z`]
+ ];
+ if(kind==='plant')return [
+  ['stem',`M${370-a} 310 H${430+a} L${445+a} 550 H${355-a}Z`],
+  ['crown',`M400 ${55+b} Q${520+a} ${35+b} ${535+a} 165 Q${660+a} 150 ${620+a} 275 Q${600+a} 375 485 345 Q400 420 315 345 Q${185-a} 375 ${180-a} 260 Q${165-a} 145 285 150 Q${295-a} ${45+b} 400 ${55+b}Z`],
+  ['leafL',`M${355-a} 380 Q${210-a} 315 ${250-a} 450 Q${300-a} 500 ${380-a} 430Z`],
+  ['leafR',`M${445+a} 380 Q${590+a} 315 ${550+a} 450 Q${500+a} 500 ${420+a} 430Z`],
+  ['fruit1',`M${325-a} 205 Q${350-a} 165 ${375-a} 205 Q${400-a} 165 ${425-a} 205 Q400 270 ${375-a} 275 Q${325-a} 255 ${325-a} 205Z`],
+  ['fruit2',`M${455+a} 260 Q${480+a} 220 ${505+a} 260 Q${530+a} 220 ${555+a} 260 Q${555+a} 315 ${505+a} 335 Q${455+a} 315 ${455+a} 260Z`]
+ ];
+ if(kind==='ride')return [
+  ['body',`M${310-a} 405 Q${255-a} 190 400 ${55+b} Q${545+a} 190 ${490+a} 405Z`],
+  ['window',`M${350-a} 220 Q400 ${155+b} ${450+a} 220 Q${465+a} 285 400 300 Q${335-a} 285 ${350-a} 220Z`],
+  ['finL',`M${310-a} 325 L${210-a} 465 L${320-a} 430Z`],
+  ['finR',`M${490+a} 325 L${590+a} 465 L${480+a} 430Z`],
+  ['flame',`M${355-a} 410 Q400 ${590+b} ${445+a} 410 Q${420+a} 465 400 440 Q${380-a} 465 ${355-a} 410Z`],
+  ['badge',`M400 335 m-28 0 a28 28 0 1 0 56 0 a28 28 0 1 0 -56 0Z`]
+ ];
+ if(kind==='building')return [
+  ['base',`M${190-a} 260 H${610+a} V530 H${190-a}Z`],
+  ['towerL',`M${205-a} 165 H${310-a} V530 H${205-a}Z`],
+  ['towerR',`M${490+a} 165 H${595+a} V530 H${490+a}Z`],
+  ['roofL',`M${180-a} 170 L${260-a} ${55+b} L${335-a} 170Z`],
+  ['roofR',`M${465+a} 170 L${540+a} ${55+b} L${620+a} 170Z`],
+  ['roofM',`M${300-a} 270 L400 ${135+b} L${500+a} 270Z`],
+  ['door',`M355 405 Q400 335 445 405 V530 H355Z`]
+ ];
+ return [
+  ['wrapper',`M${285-a} 290 H${515+a} L${485+a} 530 H${315-a}Z`],
+  ['frosting',`M${285-a} 300 Q${250-a} 220 ${325-a} 220 Q${325-a} 135 400 180 Q${470+a} 105 ${485+a} 220 Q${565+a} 220 ${515+a} 300Z`],
+  ['topping',`M${355-a} 200 Q400 ${110+b} ${445+a} 200 Q${435+a} 245 400 250 Q${365-a} 245 ${355-a} 200Z`],
+  ['cherry',`M400 155 Q${430+a} 120 ${450+a} 155 Q${450+a} 205 400 215 Q${350-a} 205 ${350-a} 155Z`],
+  ['band',`M${300-a} 390 H${500+a} L${490+a} 440 H${310-a}Z`],
+  ['sprinkleL',`M${335-a} 275 l35 -12 12 25 -35 12Z`],
+  ['sprinkleR',`M${435+a} 275 l35 -12 12 25 -35 12Z`]
+ ];
+}
+for(let n=0;n<475;n++){
+ const theme=generatedThemes[n%generatedThemes.length],variant=Math.floor(n/generatedThemes.length)+1;
+ pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0]+' '+String(variant).padStart(2,'0'),emoji:theme[1],kind:theme[2],regions:generatedRegions(theme[2],variant)});
+}
 
 const progressKey='musas-colour-world-progress-v1';
 const paintingKey='musas-colour-world-paintings-v1';
@@ -202,7 +276,7 @@ function loadPainting(id){try{const all=JSON.parse(localStorage.getItem(painting
 let completedPages=new Set();
 try{completedPages=new Set(JSON.parse(localStorage.getItem(progressKey)||'[]').filter(id=>pages.some(p=>p.id===id)))}catch(e){}
 function updateProgress(){const total=pages.length,done=completedPages.size;document.getElementById('progressFill').style.width=(done/total*100)+'%';document.getElementById('progressCount').textContent=done+' / '+total+' pictures';}
-const trophyMilestones=[{count:1,emoji:'🖍️',name:'First Masterpiece'},{count:5,emoji:'🌈',name:'Colour Explorer'},{count:10,emoji:'🐾',name:'Animal Artist'},{count:15,emoji:'⭐',name:'Creative Star'},{count:20,emoji:'🏆',name:'Art Champion'},{count:25,emoji:'👑',name:'Colour World Legend'}];
+const trophyMilestones=[{count:1,emoji:'🖍️',name:'First Masterpiece'},{count:5,emoji:'🌈',name:'Colour Explorer'},{count:10,emoji:'🐾',name:'Animal Artist'},{count:25,emoji:'⭐',name:'Creative Star'},{count:50,emoji:'🏅',name:'Super Creator'},{count:100,emoji:'🏆',name:'Art Champion'},{count:250,emoji:'💎',name:'Colour Champion'},{count:500,emoji:'👑',name:'Colour World Legend'}];
 function renderTrophyRoom(){const count=completedPages.size;document.getElementById('trophySummary').textContent='You have '+count+' of '+pages.length+' picture stars. '+(count===pages.length?'You are a Colour World Legend!':'Keep going — your next sticker is waiting!');const grid=document.getElementById('stickerGrid');grid.replaceChildren();trophyMilestones.forEach(m=>{const earned=count>=m.count,card=document.createElement('div');card.className='sticker'+(earned?' earned':'');const art=document.createElement('div');art.className='sticker-art';art.textContent=earned?m.emoji:'🔒';const title=document.createElement('strong');title.textContent=m.name;const detail=document.createElement('small');detail.textContent=earned?'Unlocked!':'Unlock at '+m.count+' pictures';card.append(art,title,detail);grid.append(card)});const gallery=document.getElementById('stickerGallery');gallery.replaceChildren();pages.forEach(p=>{const earned=completedPages.has(p.id),stamp=document.createElement('div');stamp.className='gallery-stamp'+(earned?' earned':'');const emoji=document.createElement('span');emoji.textContent=earned?p.emoji:'🔒';const name=document.createElement('b');name.textContent=p.name;stamp.append(emoji,name);gallery.append(stamp)})}
 function openTrophyRoom(){renderTrophyRoom();document.getElementById('trophyRoom').classList.add('show')}
 document.getElementById('openTrophies').addEventListener('click',openTrophyRoom);
