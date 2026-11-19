@@ -209,7 +209,7 @@ const generatedThemes=[
  ['Star Rocket','🚀','ride'],['Sweet Cupcake','🧁','treat']
 ];
 function generatedRegions(kind,v){
- const a=(v%7)*5,b=(v%5)*4,c=(v%3)*7;
+ const a=(v%25)*2,b=(Math.floor(v/25)%19)*2,c=(v%11)*2;
  if(kind==='creature')return [
   ['body',`M${255-a} 315 Q${245-a} ${180+b} 400 ${185+c} Q${555+a} ${175+b} ${545+a} 320 L${510+a} 465 Q400 ${505+c} ${290-a} 465Z`],
   ['head',`M${300-a} ${225+b} Q${285-a} 95 ${400+c} ${100+b} Q${530+a} 95 ${510+a} ${230+b} Q${505+a} 350 400 ${355+c} Q${295-a} 345 ${300-a} ${225+b}Z`],
@@ -265,8 +265,8 @@ function generatedRegions(kind,v){
  ];
 }
 for(let n=0;n<475;n++){
- const theme=generatedThemes[n%generatedThemes.length],variant=Math.floor(n/generatedThemes.length)+1;
- pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0]+' '+String(variant).padStart(2,'0'),emoji:theme[1],kind:theme[2],regions:generatedRegions(theme[2],variant)});
+ const themeIndex=n%generatedThemes.length,theme=generatedThemes[themeIndex],variant=Math.floor(n/generatedThemes.length)+1;
+ pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0]+' '+String(variant).padStart(2,'0'),emoji:theme[1],kind:theme[2],regions:generatedRegions(theme[2],n+1)});
 }
 
 const progressKey='musas-colour-world-progress-v1';
