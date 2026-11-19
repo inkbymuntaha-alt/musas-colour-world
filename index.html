@@ -15,6 +15,7 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
 .stage-card,.tools{background:#ffffffed;border:2px solid #fff;border-radius:28px;box-shadow:0 14px 36px #34405b18}
 .stage-card{padding:14px;min-height:calc(100vh - 112px);display:flex;flex-direction:column}
 .stage-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 4px 12px}.stage-head h2{margin:0;font-size:18px}.stage-head span{font-size:12px;color:var(--muted)}
+.zoom-controls{display:flex;align-items:center;gap:7px;flex-shrink:0}.zoom-controls strong{min-width:46px;text-align:center;font-size:12px;font-variant-numeric:tabular-nums}.zoom-btn{width:38px;height:36px;padding:0;font-size:22px;line-height:1}.zoom-reset{padding:9px 11px;font-size:12px}.stage-head>div:first-child{min-width:0}.stage-head>div:first-child span{display:inline-block;margin-top:3px}
 .canvas-wrap{flex:1;min-height:430px;background:#fff;border:2px dashed #e7e8f5;border-radius:19px;display:grid;place-items:center;overflow:hidden;touch-action:none}
 #art{width:100%;height:100%;max-height:calc(100vh - 205px);min-height:430px;display:block;touch-action:none}
 .tools{padding:16px;display:flex;flex-direction:column;gap:13px}.categories{grid-template-columns:repeat(3,minmax(0,1fr));max-height:46vh;overflow-y:auto;padding:3px}.category{min-height:58px;font-size:13px}.wow-trigger{width:100%;padding:16px;font-size:19px;border-radius:18px;background:linear-gradient(100deg,#ff5b91,#ff9c45);color:#fff;box-shadow:0 5px 0 #d74b80}.wow-tip{font-size:14px;line-height:1.55;background:linear-gradient(135deg,#fff3bf,#e9f8ff);padding:14px;border-radius:16px;border:2px solid #fff}.wow-tip strong{display:block;margin-bottom:5px;color:#7650bd;font-size:15px}.tools h3{font-size:15px;margin:0 0 9px}.palette{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.swatch{width:100%;aspect-ratio:1;border-radius:50%;border:3px solid white;box-shadow:0 2px 7px #26324b25;cursor:pointer;position:relative}.swatch.active{outline:3px solid var(--ink);outline-offset:2px;transform:scale(1.04)}
@@ -30,6 +31,13 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
 .confetti-piece{position:absolute;top:-25px;width:11px;height:17px;border-radius:4px;animation:confettiFall var(--fall) linear forwards;transform:rotate(var(--turn))}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes pop{from{transform:scale(.55) rotate(-7deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
 @keyframes confettiFall{to{transform:translate3d(var(--drift),110vh,0) rotate(760deg);opacity:.9}}
+/* Equal, clearly visible control cards on every screen size */
+.tools>section.control-panel{width:100%;min-width:0;min-height:142px;height:142px;box-sizing:border-box;padding:12px;border:1.5px solid #edf0f8;border-radius:16px;background:linear-gradient(145deg,#fff 0%,#fbfaff 100%);overflow:hidden}
+.tools>section.control-panel .palette{max-width:100%}
+.tools>section.control-panel .categories{width:100%;max-height:92px;overflow-y:auto}
+.tools>section.control-panel .toolrow{width:100%}
+@media(max-width:850px){.tools>section.control-panel{grid-column:1/-1}}
+@media(max-width:520px){.tools>section.control-panel{height:142px;min-height:142px}}
 /* Give the three main control panels one consistent, full-width card size */
 .tools>section:nth-child(1),
 .tools>section:nth-child(2),
@@ -84,14 +92,14 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
 </header>
 <main>
  <section class="stage-card">
-  <div class="stage-head"><h2 id="pictureTitle">Happy Puppy</h2><span id="tipText">✨ Tap a part to colour it!</span></div>
+  <div class="stage-head"><div><h2 id="pictureTitle">Happy Puppy</h2><span id="tipText">✨ Tap a part to colour it!</span></div><div class="zoom-controls" role="group" aria-label="Drawing zoom controls"><button class="btn zoom-btn" id="zoomOut" aria-label="Zoom out" title="Zoom out">−</button><strong id="zoomLabel" aria-live="polite">100%</strong><button class="btn zoom-btn" id="zoomIn" aria-label="Zoom in" title="Zoom in">＋</button><button class="btn zoom-reset" id="zoomReset" title="Reset zoom">Fit</button></div></div>
   <div class="canvas-wrap"><svg id="art" viewBox="0 0 800 600" role="img" aria-label="Colouring picture"></svg></div>
  </section>
  <aside class="tools">
-  <section><h3>🌈 Choose a colour</h3><div class="palette" id="palette"></div></section>
-  <section><h3>🖌️ Painting tools</h3><div class="toolrow"><button class="tool active" data-tool="fill">🪣 Fill</button><button class="tool" data-tool="brush">🖍️ Brush</button><button class="tool" data-tool="eraser">🧽 Eraser</button></div></section>
+  <section class="control-panel"><h3>🌈 Choose a colour</h3><div class="palette" id="palette"></div></section>
+  <section class="control-panel"><h3>🖌️ Painting tools</h3><div class="toolrow"><button class="tool active" data-tool="fill">🪣 Fill</button><button class="tool" data-tool="brush">🖍️ Brush</button><button class="tool" data-tool="eraser">🧽 Eraser</button></div></section>
   <section><h3>Brush size <span id="sizeLabel">18</span></h3><input class="range" id="size" type="range" min="5" max="55" value="18"></section>
-  <section><h3>🐾 Colouring pages</h3><div class="categories" id="categories"></div></section>
+  <section class="control-panel"><h3>🐾 Colouring pages</h3><div class="categories" id="categories"></div></section>
   <section class="bottom-tools"><button class="btn" id="clear">Clear page</button><button class="btn" id="random">Surprise me ✨</button></section>
   <button class="btn wow-trigger" id="wowCelebrate">🎉 WOW! Celebrate!</button>
   <div class="wow-tip" id="wowTip"><strong>💡 WOW tip</strong><span id="wowTipText">Try two shades of green to make your tree look magical!</span><button class="btn" id="nextTip" style="margin-top:9px">Another tip ✨</button></div>
@@ -168,6 +176,18 @@ function svgEl(tag,attrs={}){const e=document.createElementNS('http://www.w3.org
 function snapshot(){undoStack.push(JSON.stringify({fills:[...document.querySelectorAll('.region')].map(x=>x.getAttribute('fill')),strokes}));if(undoStack.length>50)undoStack.shift();redoStack=[]}
 function restore(data){const s=JSON.parse(data);document.querySelectorAll('.region').forEach((x,i)=>x.setAttribute('fill',s.fills[i]||'#fff'));strokes=s.strokes;renderStrokes()}
 function renderStrokes(){const g=document.getElementById('paintStrokes');g.replaceChildren();strokes.forEach(s=>{const p=svgEl('path',{d:s.d,fill:'none',stroke:s.color,'stroke-width':s.width,'stroke-linecap':'round','stroke-linejoin':'round','clip-path':'url(#clip-'+s.region+')'});g.append(p)})}
+let zoomLevel=1;
+function updateZoom(){
+ const svg=document.getElementById('art'),w=800/zoomLevel,h=600/zoomLevel;
+ svg.setAttribute('viewBox',((800-w)/2)+' '+((600-h)/2)+' '+w+' '+h);
+ document.getElementById('zoomLabel').textContent=Math.round(zoomLevel*100)+'%';
+ document.getElementById('zoomOut').disabled=zoomLevel<=1;
+ document.getElementById('zoomIn').disabled=zoomLevel>=3;
+}
+document.getElementById('zoomIn').addEventListener('click',()=>{zoomLevel=Math.min(3,Math.round((zoomLevel+.25)*100)/100);updateZoom()});
+document.getElementById('zoomOut').addEventListener('click',()=>{zoomLevel=Math.max(1,Math.round((zoomLevel-.25)*100)/100);updateZoom()});
+document.getElementById('zoomReset').addEventListener('click',()=>{zoomLevel=1;updateZoom()});
+window.addEventListener('keydown',e=>{if(e.target&&['INPUT','TEXTAREA'].includes(e.target.tagName))return;if(e.key==='+'||e.key==='='){zoomLevel=Math.min(3,zoomLevel+.25);updateZoom()}else if(e.key==='-'){zoomLevel=Math.max(1,zoomLevel-.25);updateZoom()}else if(e.key==='0'){zoomLevel=1;updateZoom()}});
 function buildPage(id){current=id;const page=pages.find(p=>p.id===id);document.getElementById('pictureTitle').textContent=page.name;const svg=document.getElementById('art');svg.replaceChildren();
 const defs=svgEl('defs');svg.append(defs);const bg=svgEl('rect',{x:0,y:0,width:800,height:600,fill:'#fff'});svg.append(bg);
 const rg=svgEl('g',{id:'regions'}),sg=svgEl('g',{id:'paintStrokes'}),og=svgEl('g',{id:'outlines'});svg.append(rg,sg,og);
@@ -222,6 +242,6 @@ function makeArtFile(){const clone=document.getElementById('art').cloneNode(true
 function downloadArt(){const url=URL.createObjectURL(makeArtFile());const a=document.createElement('a');a.href=url;a.download='musas-colour-world-'+current+'.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
 document.getElementById('save').onclick=downloadArt;
 document.getElementById('share').onclick=async()=>{const file=new File([makeArtFile()],'musas-colour-world-'+current+'.svg',{type:'image/svg+xml'});try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Musa's Colour World",text:'My colouring artwork!',files:[file]})}else if(navigator.share){await navigator.share({title:"Musa's Colour World",text:'I made this artwork in Musa’s Colour World! Open the game: '+location.href,url:location.href})}else{downloadArt();alert('Your artwork was saved. You can now attach it to a message to share it.')}}catch(err){if(err.name!=='AbortError')alert('Sharing is not available here. Use Save art to download your picture.')}};
-buildPage('puppy');activePageButton();
+buildPage('puppy');activePageButton();updateZoom();
 </script>
 </body></html>
