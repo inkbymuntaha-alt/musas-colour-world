@@ -1,0 +1,15 @@
+{
+  "id": "./",
+  "name": "Musa's Colour World",
+  "short_name": "Musa Colour",
+  "description": "A joyful colouring studio with original pictures for little artists.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff7ed",
+  "theme_color": "#fff7ed",
+  "icons": [
+    {"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
