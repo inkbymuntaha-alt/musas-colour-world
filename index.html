@@ -30,7 +30,6 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
 .confetti-piece{position:absolute;top:-25px;width:11px;height:17px;border-radius:4px;animation:confettiFall var(--fall) linear forwards;transform:rotate(var(--turn))}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}@keyframes pop{from{transform:scale(.55) rotate(-7deg);opacity:0}to{transform:scale(1) rotate(0);opacity:1}}
 @keyframes confettiFall{to{transform:translate3d(var(--drift),110vh,0) rotate(760deg);opacity:.9}}
-#finish{background:linear-gradient(135deg,#ff6e9f,#8d76f5);color:#fff;grid-column:1/-1;font-size:15px;padding:14px}
 @media(max-width:850px){main{grid-template-columns:1fr;padding:6px 10px 18px}.stage-card{min-height:55vh}.canvas-wrap{min-height:380px}#art{min-height:380px;max-height:60vh}.tools{display:grid;grid-template-columns:1fr 1fr;gap:14px}.tools section:first-child,.tools .hint{grid-column:1/-1}.tools .palette{grid-template-columns:repeat(8,1fr)}}
 @media(max-width:520px){header{padding:9px 12px;height:auto}.brand p{display:none}.top-actions .btn{padding:8px;font-size:11px}main{display:flex;flex-direction:column}.stage-card{min-height:440px;padding:9px}.canvas-wrap{min-height:360px}#art{min-height:360px}.tools{display:flex}.tools .palette{grid-template-columns:repeat(8,1fr)}}
 </style>
@@ -51,7 +50,7 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
   <section><h3>Brush size <span id="sizeLabel">18</span></h3><input class="range" id="size" type="range" min="5" max="55" value="18"></section>
   <section><h3>🐾 Colouring pages</h3><div class="categories" id="categories"></div></section>
   <section class="bottom-tools"><button class="btn" id="clear">Clear page</button><button class="btn" id="random">Surprise me ✨</button></section>
-  <button class="btn" id="finish">🎉 I’m finished! Celebrate!</button><div class="hint">Fill every part to trigger a surprise celebration, or tap “I’m finished!” when your masterpiece is ready.</div>
+  <div class="hint">🎨 Colour every part of your picture to unlock a surprise celebration!</div>
 </aside>
 </main>
 <div id="celebration" role="dialog" aria-modal="true" aria-label="Colouring celebration"><div id="confetti"></div><div class="celebrate-card"><span class="trophy">🏆🌈</span><div class="wow">WOW!!!</div><p>Your masterpiece is AMAZING!</p><div style="font-size:38px">👏 👏 👏</div><p style="font-size:17px">You are a super artist!</p><button class="btn primary" id="celebrateClose">Keep creating 💖</button></div></div>
@@ -126,8 +125,15 @@ if(id==='rocket')og.insertAdjacentHTML('beforeend','<g><circle cx="400" cy="230"
 if(id==='flower')og.insertAdjacentHTML('beforeend','<g class="detail"><path d="M405 440 q80 -55 100 0 q-60 50 -100 0 M400 485 q-75 -55 -100 0 q55 50 100 0"/></g>');
 if(id==='castle')og.insertAdjacentHTML('beforeend','<g class="detail"><path d="M235 195 v-35 M565 195 v-35 M370 270 v-30 M430 270 v-30"/><rect x="235" y="260" width="45" height="55" rx="20" fill="#fff" stroke="#273047" stroke-width="4"/><rect x="520" y="260" width="45" height="55" rx="20" fill="#fff" stroke="#273047" stroke-width="4"/></g>');
 strokes=[];undoStack=[];redoStack=[];selected=null;celebrationShown=false;hideCelebration();renderStrokes()}
-function onRegionDown(e,name,el,d){e.preventDefault();selected=name;if(tool==='fill'){snapshot();el.setAttribute('fill',chosen);checkFinished();return}if(tool==='eraser'){snapshot();el.setAttribute('fill','#ffffff');strokes=strokes.filter(x=>x.region!==name);renderStrokes();celebrationShown=false;return}startStroke(e,name,d)}
-document.getElementById('art').addEventListener('pointerdown',e=>{const el=e.target.closest && e.target.closest('.region');if(!el)return;const name=el.id.replace('region-','');const page=pages.find(p=>p.id===current);const region=page.regions.find(r=>r[0]===name);if(region)onRegionDown(e,name,el,region[1])});
+function eraseRegion(el){if(!el)return;const name=el.id.replace('region-','');if(!name||!document.getElementById('region-'+name))return;el.setAttribute('fill','#ffffff');strokes=strokes.filter(x=>x.region!==name);renderStrokes();celebrationShown=false}
+function regionAtPoint(e){const hit=document.elementFromPoint(e.clientX,e.clientY);return hit&&hit.closest?hit.closest('.region'):null}
+let erasing=false,eraseSnapshotTaken=false;
+function onRegionDown(e,name,el,d){e.preventDefault();selected=name;if(tool==='fill'){snapshot();el.setAttribute('fill',chosen);checkFinished();return}if(tool==='eraser'){if(!eraseSnapshotTaken){snapshot();eraseSnapshotTaken=true}erasing=true;eraseRegion(el);try{document.getElementById('art').setPointerCapture(e.pointerId)}catch(err){}return}startStroke(e,name,d)}
+document.getElementById('art').addEventListener('pointerdown',e=>{const el=(e.target.closest&&e.target.closest('.region'))||regionAtPoint(e);if(!el)return;const name=el.id.replace('region-','');const page=pages.find(p=>p.id===current);const region=page.regions.find(r=>r[0]===name);if(region)onRegionDown(e,name,el,region[1])},true);
+document.getElementById('art').addEventListener('pointermove',e=>{if(!erasing||tool!=='eraser')return;const el=regionAtPoint(e);if(el)eraseRegion(el)});
+function endErase(){erasing=false;eraseSnapshotTaken=false}
+document.getElementById('art').addEventListener('pointerup',endErase);
+document.getElementById('art').addEventListener('pointercancel',endErase);
 let drawing=null;
 function point(e){const svg=document.getElementById('art'),pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
 function startStroke(e,name,d,alreadySaved=false){const p=point(e),el=document.getElementById('region-'+name);if(!el.isPointInFill(p))return;if(!alreadySaved)snapshot();drawing={region:name,color:tool==='eraser'?'#ffffff':chosen,width:size,d:'M '+p.x+' '+p.y};strokes.push(drawing);document.getElementById('art').setPointerCapture(e.pointerId);renderStrokes()}
@@ -145,7 +151,6 @@ function checkFinished(){if(celebrationShown)return;const page=pages.find(p=>p.i
 function showCelebration(){if(celebrationShown)return;celebrationShown=true;const modal=document.getElementById('celebration'),confetti=document.getElementById('confetti');modal.classList.add('show');confetti.replaceChildren();const palette=['#ff5b91','#ffcf45','#7cdb9b','#55c9ef','#9a83ff','#ff914d'];for(let i=0;i<90;i++){const bit=document.createElement('i');bit.className='confetti-piece';bit.style.left=(Math.random()*100)+'%';bit.style.background=palette[i%palette.length];bit.style.setProperty('--fall',(2.4+Math.random()*2.8)+'s');bit.style.setProperty('--turn',(Math.random()*180)+'deg');bit.style.setProperty('--drift',((Math.random()-.5)*240)+'px');bit.style.animationDelay=(Math.random()*.8)+'s';confetti.append(bit)}playClaps();if('speechSynthesis'in window){try{speechSynthesis.cancel();const cheer=new SpeechSynthesisUtterance('Wow! Amazing colouring! You are a super artist!');cheer.rate=.92;cheer.pitch=1.35;speechSynthesis.speak(cheer)}catch(e){}}clearTimeout(celebrationTimer);celebrationTimer=setTimeout(hideCelebration,20000)}
 function playClaps(){try{const Ctx=window.AudioContext||window.webkitAudioContext;if(!Ctx)return;const ctx=new Ctx();for(let i=0;i<24;i++){const start=ctx.currentTime+i*.105+(Math.random()*.035),length=.075,buffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*length),ctx.sampleRate),data=buffer.getChannelData(0);for(let j=0;j<data.length;j++)data[j]=(Math.random()*2-1)*(1-j/data.length);const source=ctx.createBufferSource(),gain=ctx.createGain(),filter=ctx.createBiquadFilter();source.buffer=buffer;filter.type='highpass';filter.frequency.value=850+Math.random()*900;gain.gain.setValueAtTime(.0001,start);gain.gain.exponentialRampToValueAtTime(.22,start+.008);gain.gain.exponentialRampToValueAtTime(.0001,start+length);source.connect(filter);filter.connect(gain);gain.connect(ctx.destination);source.start(start);source.stop(start+length)}setTimeout(()=>ctx.close(),3800)}catch(e){}}
 function hideCelebration(){document.getElementById('celebration').classList.remove('show');clearTimeout(celebrationTimer)}
-document.getElementById('finish').addEventListener('click',showCelebration);
 document.getElementById('celebrateClose').addEventListener('click',hideCelebration);
 document.getElementById('celebration').addEventListener('click',e=>{if(e.target.id==='celebration')hideCelebration()});
 
