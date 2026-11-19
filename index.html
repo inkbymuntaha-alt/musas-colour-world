@@ -109,8 +109,9 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
 <div id="celebration" role="dialog" aria-modal="true" aria-label="Colouring celebration"><div id="confetti"></div><div class="celebrate-card"><span class="trophy">🏆🌈</span><div class="wow">WOW!!!</div><p>Your masterpiece is AMAZING!</p><div style="font-size:38px">👏 👏 👏</div><p style="font-size:17px">You are a super artist!</p><button class="btn primary" id="celebrateClose">Keep creating 💖</button></div></div>
 <script>
 const colors=['#f44336','#ff8a00','#ffd52a','#7ac943','#20bfa9','#29a8e8','#4264d9','#9163d9','#e85bb4','#ffb7c8','#8b5a3c','#7d8798','#222222','#ffffff','#f6d6a8'];
-let chosen=colors[0],tool='fill',size=18,selected=null,strokes=[],undoStack=[],redoStack=[],current='puppy',celebrationShown=false,celebrationTimer=null;
+let chosen=colors[0],tool='fill',size=18,selected=null,strokes=[],undoStack=[],redoStack=[],current='lion',celebrationShown=false,celebrationTimer=null;
 const pages=[
+{id:'lion',name:'Little Lion',emoji:'🦁',regions:[['mane','M400 80 Q570 70 600 230 Q680 370 520 470 Q400 560 270 460 Q110 350 205 190 Q260 70 400 80Z'],['face','M300 190 Q400 130 500 190 L520 330 Q500 430 400 440 Q300 430 280 330Z'],['muzzle','M340 320 Q400 285 460 320 Q470 380 400 390 Q330 380 340 320Z'],['earL','M285 205 Q230 145 250 250Z'],['earR','M515 205 Q570 145 550 250Z'],['body','M310 430 Q400 400 490 430 L510 520 H290Z']]},
 {id:'puppy',name:'Happy Puppy',emoji:'🐶',regions:[
 ['body','M250 240 Q270 145 390 160 Q500 160 530 270 L500 420 Q390 480 270 410Z'],
 ['earL','M270 190 Q180 155 195 285 Q215 345 280 300Z'],['earR','M470 185 Q555 130 590 245 Q600 315 520 310Z'],
@@ -155,7 +156,7 @@ const pages=[
 ['middle','M315 230 H485 V510 H315Z'],['roofL','M190 170 L260 65 L330 170Z'],['roofR','M470 170 L540 65 L610 170Z'],['roofM','M300 230 L400 115 L500 230Z'],
 ['door','M355 390 Q400 330 445 390 V510 H355Z']]},
 {id:'elephant',name:'Gentle Elephant',emoji:'🐘',regions:[['body','M230 280 Q240 150 390 155 Q535 150 555 285 L530 440 Q400 500 270 430Z'],['ear','M260 220 Q130 160 150 320 Q175 400 285 350Z'],['trunk','M500 270 Q620 260 590 390 Q575 455 520 420 Q565 380 525 360Z'],['leg1','M285 400 H355 V520 H275Z'],['leg2','M435 410 H505 V520 H425Z'],['tusk','M500 355 Q550 370 530 420 Q500 400 500 355Z']]},
-{id:'lion',name:'Little Lion',emoji:'🦁',regions:[['mane','M400 80 Q570 70 600 230 Q680 370 520 470 Q400 560 270 460 Q110 350 205 190 Q260 70 400 80Z'],['face','M300 190 Q400 130 500 190 L520 330 Q500 430 400 440 Q300 430 280 330Z'],['muzzle','M340 320 Q400 285 460 320 Q470 380 400 390 Q330 380 340 320Z'],['earL','M285 205 Q230 145 250 250Z'],['earR','M515 205 Q570 145 550 250Z'],['body','M310 430 Q400 400 490 430 L510 520 H290Z']]},
+
 {id:'turtle',name:'Tiny Turtle',emoji:'🐢',regions:[['shell','M210 300 Q220 145 400 150 Q580 145 590 300 Q560 440 400 440 Q240 440 210 300Z'],['head','M555 275 Q680 230 700 320 Q680 400 565 365Z'],['leg1','M260 390 Q200 430 220 500 Q280 520 320 440Z'],['leg2','M460 420 Q520 450 500 510 Q440 520 420 445Z'],['leg3','M270 220 Q220 160 190 210 L230 290Z'],['tail','M210 330 L150 370 L225 390Z']]},
 {id:'rabbit',name:'Bunny Friend',emoji:'🐰',regions:[['body','M280 300 Q300 190 410 210 Q530 220 520 360 L490 500 H300Z'],['head','M290 210 Q275 110 370 100 Q485 90 510 200 Q510 330 400 340 Q290 330 290 210Z'],['earL','M325 125 Q270 0 310 0 Q365 20 370 115Z'],['earR','M430 115 Q455 0 500 20 Q535 70 475 145Z'],['footL','M280 455 Q210 450 220 510 Q260 545 340 510Z'],['footR','M430 480 Q520 450 550 510 Q540 550 450 525Z']]},
 {id:'whale',name:'Happy Whale',emoji:'🐳',regions:[['body','M120 320 Q180 130 440 170 Q610 190 650 330 Q590 460 390 450 Q190 460 120 320Z'],['tail','M625 300 Q710 180 750 230 L700 340 Q760 420 710 440 L625 365Z'],['fin','M350 420 Q400 520 480 440Z'],['belly','M180 340 Q350 400 570 340 Q550 450 370 460 Q220 450 180 340Z']]},
@@ -242,6 +243,6 @@ function makeArtFile(){const clone=document.getElementById('art').cloneNode(true
 function downloadArt(){const url=URL.createObjectURL(makeArtFile());const a=document.createElement('a');a.href=url;a.download='musas-colour-world-'+current+'.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
 document.getElementById('save').onclick=downloadArt;
 document.getElementById('share').onclick=async()=>{const file=new File([makeArtFile()],'musas-colour-world-'+current+'.svg',{type:'image/svg+xml'});try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Musa's Colour World",text:'My colouring artwork!',files:[file]})}else if(navigator.share){await navigator.share({title:"Musa's Colour World",text:'I made this artwork in Musa’s Colour World! Open the game: '+location.href,url:location.href})}else{downloadArt();alert('Your artwork was saved. You can now attach it to a message to share it.')}}catch(err){if(err.name!=='AbortError')alert('Sharing is not available here. Use Save art to download your picture.')}};
-buildPage('puppy');activePageButton();updateZoom();
+buildPage('lion');activePageButton();updateZoom();
 </script>
 </body></html>
