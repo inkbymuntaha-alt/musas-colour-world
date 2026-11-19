@@ -27,7 +27,7 @@ main{max-width:1500px;margin:auto;padding:8px 18px 24px;display:grid;grid-templa
 <body>
 <header>
  <div class="brand"><div class="logo">🎨</div><div><h1>Musa's Colour World</h1><p>Pick a picture. Choose your colours. Make it yours!</p></div></div>
- <div class="top-actions"><button class="btn" id="undo">↶ Undo</button><button class="btn" id="redo">↷ Redo</button><button class="btn primary" id="save">⬇ Save art</button></div>
+ <div class="top-actions"><button class="btn" id="undo">↶ Undo</button><button class="btn" id="redo">↷ Redo</button><button class="btn" id="reset">↻ Reset</button><button class="btn" id="share">↗ Share</button><button class="btn primary" id="save">⬇ Save art</button></div>
 </header>
 <main>
  <section class="stage-card">
@@ -90,6 +90,14 @@ const pages=[
 ['base','M190 270 H610 V510 H190Z'],['towerL','M205 170 H315 V510 H205Z'],['towerR','M485 170 H595 V510 H485Z'],
 ['middle','M315 230 H485 V510 H315Z'],['roofL','M190 170 L260 65 L330 170Z'],['roofR','M470 170 L540 65 L610 170Z'],['roofM','M300 230 L400 115 L500 230Z'],
 ['door','M355 390 Q400 330 445 390 V510 H355Z']]},
+,
+{id:'elephant',name:'Gentle Elephant',emoji:'🐘',regions:[['body','M230 280 Q240 150 390 155 Q535 150 555 285 L530 440 Q400 500 270 430Z'],['ear','M260 220 Q130 160 150 320 Q175 400 285 350Z'],['trunk','M500 270 Q620 260 590 390 Q575 455 520 420 Q565 380 525 360Z'],['leg1','M285 400 H355 V520 H275Z'],['leg2','M435 410 H505 V520 H425Z'],['tusk','M500 355 Q550 370 530 420 Q500 400 500 355Z']]},
+{id:'lion',name:'Little Lion',emoji:'🦁',regions:[['mane','M400 80 Q570 70 600 230 Q680 370 520 470 Q400 560 270 460 Q110 350 205 190 Q260 70 400 80Z'],['face','M300 190 Q400 130 500 190 L520 330 Q500 430 400 440 Q300 430 280 330Z'],['muzzle','M340 320 Q400 285 460 320 Q470 380 400 390 Q330 380 340 320Z'],['earL','M285 205 Q230 145 250 250Z'],['earR','M515 205 Q570 145 550 250Z'],['body','M310 430 Q400 400 490 430 L510 520 H290Z']]},
+{id:'turtle',name:'Tiny Turtle',emoji:'🐢',regions:[['shell','M210 300 Q220 145 400 150 Q580 145 590 300 Q560 440 400 440 Q240 440 210 300Z'],['head','M555 275 Q680 230 700 320 Q680 400 565 365Z'],['leg1','M260 390 Q200 430 220 500 Q280 520 320 440Z'],['leg2','M460 420 Q520 450 500 510 Q440 520 420 445Z'],['leg3','M270 220 Q220 160 190 210 L230 290Z'],['tail','M210 330 L150 370 L225 390Z']]},
+{id:'rabbit',name:'Bunny Friend',emoji:'🐰',regions:[['body','M280 300 Q300 190 410 210 Q530 220 520 360 L490 500 H300Z'],['head','M290 210 Q275 110 370 100 Q485 90 510 200 Q510 330 400 340 Q290 330 290 210Z'],['earL','M325 125 Q270 0 310 0 Q365 20 370 115Z'],['earR','M430 115 Q455 0 500 20 Q535 70 475 145Z'],['footL','M280 455 Q210 450 220 510 Q260 545 340 510Z'],['footR','M430 480 Q520 450 550 510 Q540 550 450 525Z']]},
+{id:'whale',name:'Happy Whale',emoji:'🐳',regions:[['body','M120 320 Q180 130 440 170 Q610 190 650 330 Q590 460 390 450 Q190 460 120 320Z'],['tail','M625 300 Q710 180 750 230 L700 340 Q760 420 710 440 L625 365Z'],['fin','M350 420 Q400 520 480 440Z'],['belly','M180 340 Q350 400 570 340 Q550 450 370 460 Q220 450 180 340Z']]},
+{id:'owl',name:'Sleepy Owl',emoji:'🦉',regions:[['body','M230 270 Q230 100 400 100 Q570 100 570 270 L550 490 H250Z'],['wingL','M250 270 Q120 280 200 430 L285 400Z'],['wingR','M550 270 Q680 280 600 430 L515 400Z'],['belly','M300 320 Q400 270 500 320 L490 490 H310Z'],['earL','M250 190 L210 80 L330 140Z'],['earR','M550 190 L590 80 L470 140Z']]},
+{id:'dino',name:'Friendly Dinosaur',emoji:'🦕',regions:[['body','M220 350 Q220 190 390 190 Q530 180 550 310 L610 350 L550 390 Q530 510 430 500 H280 Q230 470 220 350Z'],['neck','M440 220 Q450 80 570 100 Q650 130 600 250 L540 310Z'],['tail','M250 350 Q130 300 90 390 Q160 430 250 420Z'],['leg1','M300 450 H370 V540 H285Z'],['leg2','M440 450 H510 V540 H425Z'],['spike','M300 200 L330 130 L370 200 L410 120 L450 210 L490 145 L520 240Z']]}
 ];
 function svgEl(tag,attrs={}){const e=document.createElementNS('http://www.w3.org/2000/svg',tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));return e}
 function snapshot(){undoStack.push(JSON.stringify({fills:[...document.querySelectorAll('.region')].map(x=>x.getAttribute('fill')),strokes}));if(undoStack.length>50)undoStack.shift();redoStack=[]}
@@ -107,7 +115,7 @@ if(id==='rocket')og.insertAdjacentHTML('beforeend','<g><circle cx="400" cy="230"
 if(id==='flower')og.insertAdjacentHTML('beforeend','<g class="detail"><path d="M405 440 q80 -55 100 0 q-60 50 -100 0 M400 485 q-75 -55 -100 0 q55 50 100 0"/></g>');
 if(id==='castle')og.insertAdjacentHTML('beforeend','<g class="detail"><path d="M235 195 v-35 M565 195 v-35 M370 270 v-30 M430 270 v-30"/><rect x="235" y="260" width="45" height="55" rx="20" fill="#fff" stroke="#273047" stroke-width="4"/><rect x="520" y="260" width="45" height="55" rx="20" fill="#fff" stroke="#273047" stroke-width="4"/></g>');
 strokes=[];undoStack=[];redoStack=[];selected=null;renderStrokes()}
-function onRegionDown(e,name,el,d){e.preventDefault();if(tool==='fill'||tool==='eraser'){snapshot();el.setAttribute('fill',tool==='eraser'?'#ffffff':chosen);selected=name;return}selected=name;startStroke(e,name,d)}
+function onRegionDown(e,name,el,d){e.preventDefault();if(tool==='fill'){snapshot();el.setAttribute('fill',chosen);selected=name;return}selected=name;if(tool==='eraser'){snapshot();el.setAttribute('fill','#ffffff');strokes=strokes.filter(x=>x.region!==name);renderStrokes();startStroke(e,name,d);if(drawing)drawing.color='#ffffff';return}startStroke(e,name,d)}
 let drawing=null;
 function point(e){const svg=document.getElementById('art'),pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;return pt.matrixTransform(svg.getScreenCTM().inverse())}
 function startStroke(e,name,d){const p=point(e),el=document.getElementById('region-'+name);if(!el.isPointInFill(p))return;snapshot();drawing={region:name,color:tool==='eraser'?'#ffffff':chosen,width:size,d:'M '+p.x+' '+p.y};strokes.push(drawing);document.getElementById('art').setPointerCapture(e.pointerId);renderStrokes()}
@@ -122,9 +130,14 @@ const cats=document.getElementById('categories');pages.forEach(p=>{const b=docum
 function activePageButton(){[...cats.children].forEach((b,i)=>b.classList.toggle('active',pages[i].id===current))}
 document.getElementById('undo').onclick=()=>{if(!undoStack.length)return;redoStack.push(JSON.stringify({fills:[...document.querySelectorAll('.region')].map(x=>x.getAttribute('fill')),strokes}));restore(undoStack.pop())};
 document.getElementById('redo').onclick=()=>{if(!redoStack.length)return;undoStack.push(JSON.stringify({fills:[...document.querySelectorAll('.region')].map(x=>x.getAttribute('fill')),strokes}));restore(redoStack.pop())};
-document.getElementById('clear').onclick=()=>{snapshot();document.querySelectorAll('.region').forEach(x=>x.setAttribute('fill','#fff'));strokes=[];renderStrokes()};
+function resetPage(){snapshot();document.querySelectorAll('.region').forEach(x=>x.setAttribute('fill','#ffffff'));strokes=[];renderStrokes()}
+document.getElementById('clear').onclick=resetPage;
+document.getElementById('reset').onclick=resetPage;
 document.getElementById('random').onclick=()=>{const p=pages[Math.floor(Math.random()*pages.length)];buildPage(p.id);activePageButton()};
-document.getElementById('save').onclick=()=>{const clone=document.getElementById('art').cloneNode(true);clone.setAttribute('xmlns','http://www.w3.org/2000/svg');const data=new Blob([new XMLSerializer().serializeToString(clone)],{type:'image/svg+xml'});const url=URL.createObjectURL(data);const a=document.createElement('a');a.href=url;a.download='musas-colour-world-'+current+'.svg';a.click();URL.revokeObjectURL(url)};
+function makeArtFile(){const clone=document.getElementById('art').cloneNode(true);clone.setAttribute('xmlns','http://www.w3.org/2000/svg');return new Blob([new XMLSerializer().serializeToString(clone)],{type:'image/svg+xml'})}
+function downloadArt(){const url=URL.createObjectURL(makeArtFile());const a=document.createElement('a');a.href=url;a.download='musas-colour-world-'+current+'.svg';a.click();setTimeout(()=>URL.revokeObjectURL(url),1500)}
+document.getElementById('save').onclick=downloadArt;
+document.getElementById('share').onclick=async()=>{const file=new File([makeArtFile()],'musas-colour-world-'+current+'.svg',{type:'image/svg+xml'});try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Musa's Colour World",text:'My colouring artwork!',files:[file]})}else if(navigator.share){await navigator.share({title:"Musa's Colour World",text:'I made this artwork in Musa’s Colour World! Open the game: '+location.href,url:location.href})}else{downloadArt();alert('Your artwork was saved. You can now attach it to a message to share it.')}}catch(err){if(err.name!=='AbortError')alert('Sharing is not available here. Use Save art to download your picture.')}};
 buildPage('puppy');activePageButton();
 </script>
 </body></html>
