@@ -184,6 +184,45 @@ button,.tool,.category,.swatch{touch-action:manipulation}
  .category{min-height:32px;padding:5px 3px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Complete, scrollable 120-colour palette on phones, tablets and desktops. */
+.tools>section:first-child{min-width:0;overflow:visible!important}
+.tools>section:first-child .palette{
+ display:grid;
+ grid-template-columns:repeat(8,minmax(0,1fr));
+ gap:8px;
+ width:100%;
+ max-height:min(34dvh,290px);
+ min-height:0;
+ overflow-y:auto;
+ overflow-x:hidden;
+ overscroll-behavior:contain;
+ align-content:start;
+ justify-content:stretch;
+ padding:5px 5px 10px;
+ scrollbar-width:thin;
+}
+.tools>section:first-child .swatch{
+ display:block;
+ width:100%;
+ max-width:40px;
+ min-width:0;
+ aspect-ratio:1;
+ justify-self:center;
+ border-width:2px;
+}
+@media(max-width:560px){
+ .tools>section:first-child .palette{
+  grid-template-columns:repeat(8,minmax(0,1fr));
+  gap:8px;
+  max-height:260px;
+ }
+ .tools>section:first-child .swatch{max-width:38px}
+}
+@media(max-width:360px){
+ .tools>section:first-child .palette{grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
+}
+
 </style>
 </head>
 <body>
