@@ -504,9 +504,10 @@ function generatedRegions(kind,v,themeIndex){
   ['sprinkleR',`M${435+a} 275 l35 -12 12 25 -35 12Z`]
  ];
 }
-for(let n=0;n<500;n++){
- const themeIndex=n%generatedThemes.length,theme=generatedThemes[themeIndex],variant=Math.floor(n/generatedThemes.length)+1;
- pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0]+' · Study '+String(variant).padStart(2,'0'),emoji:theme[1],kind:theme[2],regions:generatedRegions(theme[2],n+1,themeIndex)});
+for(let n=0;n<generatedThemes.length;n++){
+ const themeIndex=n,theme=generatedThemes[themeIndex];
+ const regions=generatedRegions(theme[2],n+1,themeIndex);
+ pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0],emoji:theme[1],kind:theme[2],difficulty:regions.length,regions});
 }
 
 const progressKey='musas-colour-world-progress-v1';
@@ -516,7 +517,7 @@ function loadPainting(id){try{const all=JSON.parse(localStorage.getItem(painting
 let completedPages=new Set();
 try{completedPages=new Set(JSON.parse(localStorage.getItem(progressKey)||'[]').filter(id=>pages.some(p=>p.id===id)))}catch(e){}
 function updateProgress(){const total=pages.length,done=completedPages.size;document.getElementById('progressFill').style.width=(done/total*100)+'%';document.getElementById('progressCount').textContent=done+' / '+total+' pictures';}
-const trophyMilestones=[{count:1,emoji:'🖍️',name:'First Masterpiece'},{count:5,emoji:'🌈',name:'Colour Explorer'},{count:10,emoji:'🐾',name:'Animal Artist'},{count:25,emoji:'⭐',name:'Creative Star'},{count:50,emoji:'🏅',name:'Super Creator'},{count:100,emoji:'🏆',name:'Art Champion'},{count:250,emoji:'💎',name:'Colour Champion'},{count:500,emoji:'👑',name:'Colour World Legend'}];
+const trophyMilestones=[{count:1,emoji:'🖍️',name:'First Masterpiece'},{count:5,emoji:'🌈',name:'Colour Explorer'},{count:10,emoji:'🐾',name:'Animal Artist'},{count:25,emoji:'⭐',name:'Creative Star'},{count:20,emoji:'🏅',name:'Super Creator'},{count:25,emoji:'👑',name:'Colour World Legend'}];
 function renderTrophyRoom(){const count=completedPages.size;document.getElementById('trophySummary').textContent='You have '+count+' of '+pages.length+' picture stars. '+(count===pages.length?'You are a Colour World Legend!':'Keep going — your next sticker is waiting!');const grid=document.getElementById('stickerGrid');grid.replaceChildren();trophyMilestones.forEach(m=>{const earned=count>=m.count,card=document.createElement('div');card.className='sticker'+(earned?' earned':'');const art=document.createElement('div');art.className='sticker-art';art.textContent=earned?m.emoji:'🔒';const title=document.createElement('strong');title.textContent=m.name;const detail=document.createElement('small');detail.textContent=earned?'Unlocked!':'Unlock at '+m.count+' pictures';card.append(art,title,detail);grid.append(card)});const gallery=document.getElementById('stickerGallery');gallery.replaceChildren();pages.forEach(p=>{const earned=completedPages.has(p.id),stamp=document.createElement('div');stamp.className='gallery-stamp'+(earned?' earned':'');const emoji=document.createElement('span');emoji.textContent=earned?p.emoji:'🔒';const name=document.createElement('b');name.textContent=p.name;stamp.append(emoji,name);gallery.append(stamp)})}
 function openTrophyRoom(){renderTrophyRoom();document.getElementById('trophyRoom').classList.add('show')}
 document.getElementById('openTrophies').addEventListener('click',openTrophyRoom);
@@ -632,7 +633,7 @@ const cats=document.getElementById('categories');
 let pageSortMode='az';
 function renderPagePicker(){
  const ordered=[...pages];
- const studyNumber=p=>Number((p.name.match(/Study (\\d+)/)||[])[1]||0);
+ const studyNumber=p=>p.difficulty||p.regions.length;
  if(pageSortMode==='az')ordered.sort((a,b)=>a.name.localeCompare(b.name));
  else if(pageSortMode==='za')ordered.sort((a,b)=>b.name.localeCompare(a.name));
  else if(pageSortMode==='low')ordered.sort((a,b)=>studyNumber(a)-studyNumber(b)||a.name.localeCompare(b.name));
