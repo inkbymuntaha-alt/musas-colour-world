@@ -275,6 +275,33 @@ button,.tool,.category,.swatch{touch-action:manipulation}
  .tools>section:first-child .swatch{max-width:32px}
 }
 
+
+/* Phone/tablet quick drawing dock: reachable tools and horizontal full palette. */
+.mobile-drawing-dock{display:none}
+@media(max-width:760px){
+ body{padding-bottom:calc(112px + env(safe-area-inset-bottom))}
+ .mobile-drawing-dock{
+  display:block;position:fixed;z-index:1000;left:0;right:0;bottom:0;
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.97);border-top:1px solid #e5e7eb;
+  box-shadow:0 -5px 24px rgba(31,41,55,.12);
+  backdrop-filter:blur(14px);
+ }
+ .mobile-dock-actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:8px}
+ .mobile-dock-btn{min-width:0;min-height:40px;padding:7px 3px;border:1px solid #e5e7eb;border-radius:13px;background:#fff;color:#273247;font-weight:800;font-size:clamp(10px,2.8vw,13px);white-space:nowrap}
+ .mobile-dock-btn.active{border:2px solid #7772df;background:#f4efff;color:#6555b7}
+ .mobile-dock-palette{display:flex;gap:8px;overflow-x:auto;overflow-y:hidden;padding:3px 2px 7px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+ .mobile-dock-swatch{flex:0 0 31px;width:31px;height:31px;border:2px solid #fff;border-radius:50%;box-shadow:0 1px 5px #0003;scroll-snap-align:start}
+ .mobile-dock-swatch.active{outline:3px solid #7772df;outline-offset:1px}
+}
+@media(orientation:landscape) and (max-height:520px) and (max-width:900px){
+ body{padding-bottom:calc(82px + env(safe-area-inset-bottom))}
+ .mobile-drawing-dock{padding:4px 8px calc(4px + env(safe-area-inset-bottom))}
+ .mobile-dock-actions{margin-bottom:4px}
+ .mobile-dock-btn{min-height:32px;padding:3px;font-size:11px}
+ .mobile-dock-swatch{flex-basis:25px;width:25px;height:25px}
+}
+
 </style>
 </head>
 <body>
@@ -624,5 +651,44 @@ document.getElementById('save').onclick=downloadArt;
 document.getElementById('share').onclick=async()=>{const btn=document.getElementById('share');btn.disabled=true;const oldLabel=btn.textContent;btn.textContent='Preparing…';let shared=false;try{const file=await makePngFile();if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:"Musa's Colour World",text:'Look at my colouring masterpiece! 🎨',files:[file]});shared=true}else if(navigator.share){await navigator.share({title:"Musa's Colour World",text:'Look at my colouring masterpiece! 🎨 '+location.href,url:location.href});shared=true}else{downloadBlob(file,file.name);const copied=await copyShareLink();alert(copied?'Your artwork PNG has been saved and the game link copied. Attach the PNG to WhatsApp or another app to share it!':'Your artwork PNG has been saved. Attach it to a message to share it!')}}catch(err){if(err&&err.name!=='AbortError'){try{const file=await makePngFile();downloadBlob(file,file.name);const copied=await copyShareLink();alert(copied?'Direct sharing was unavailable, so your PNG was saved and the game link copied. Share the PNG from your downloads.':'Direct sharing was unavailable. Your PNG was saved; attach it from your downloads.')}catch(fallbackError){alert('Could not create the share image on this browser. Please use Save art to download the SVG.')}}}finally{btn.disabled=false;btn.textContent=oldLabel}};
 buildPage('lion');activePageButton();updateZoom();updateProgress();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
+
+/* Mobile quick-draw dock mirrors the existing tools and all 120 palette colours. */
+(function(){
+ const dock=document.getElementById('mobileDrawingDock');
+ const quickPalette=document.getElementById('mobileDockPalette');
+ if(!dock||!quickPalette)return;
+ document.querySelectorAll('[data-quick-tool]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+   setTool(btn.dataset.quickTool);
+   dock.querySelectorAll('[data-quick-tool]').forEach(x=>x.classList.toggle('active',x===btn));
+  });
+ });
+ document.getElementById('mobileUndo').addEventListener('click',()=>document.getElementById('undo').click());
+ document.getElementById('mobileRedo').addEventListener('click',()=>document.getElementById('redo').click());
+ colors.forEach((colour,index)=>{
+  const b=document.createElement('button');
+  b.type='button';b.className='mobile-dock-swatch';b.style.background=colour;
+  b.setAttribute('aria-label','Quick colour '+(index+1));b.title='Colour '+(index+1);
+  b.addEventListener('click',()=>{
+   const original=pal.children[index];if(original)original.click();
+   quickPalette.querySelectorAll('.mobile-dock-swatch').forEach(x=>x.classList.remove('active'));
+   b.classList.add('active');
+  });
+  quickPalette.append(b);
+ });
+ quickPalette.firstElementChild?.classList.add('active');
+})();
+
 </script>
+
+<div class="mobile-drawing-dock" id="mobileDrawingDock" aria-label="Quick drawing controls">
+ <div class="mobile-dock-actions">
+  <button type="button" class="mobile-dock-btn" data-quick-tool="fill">🪣 Fill</button>
+  <button type="button" class="mobile-dock-btn" data-quick-tool="brush">🖍️ Brush</button>
+  <button type="button" class="mobile-dock-btn" data-quick-tool="eraser">🧽 Eraser</button>
+  <button type="button" class="mobile-dock-btn" id="mobileUndo">↶ Undo</button>
+  <button type="button" class="mobile-dock-btn" id="mobileRedo">↷ Redo</button>
+ </div>
+ <div class="mobile-dock-palette" id="mobileDockPalette" aria-label="Quick colour selection"></div>
+</div>
 </body></html>
