@@ -302,6 +302,51 @@ button,.tool,.category,.swatch{touch-action:manipulation}
  .mobile-dock-swatch{flex-basis:25px;width:25px;height:25px}
 }
 
+
+/* Immersive full-screen colouring mode */
+body.immersive-mode{overflow:hidden!important}
+body.immersive-mode header,
+body.immersive-mode .tools{display:none!important}
+body.immersive-mode main{
+ position:fixed!important;inset:0!important;z-index:900;
+ display:block!important;width:100%!important;height:100dvh!important;
+ min-height:0!important;margin:0!important;padding:0!important;
+ background:#f7f7ff;
+}
+body.immersive-mode .stage-card{
+ position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+ min-height:0!important;margin:0!important;padding:10px 12px 100px!important;
+ border:0!important;border-radius:0!important;box-shadow:none!important;
+}
+body.immersive-mode .stage-head{padding:2px 2px 8px;flex-wrap:nowrap}
+body.immersive-mode .stage-head>div:first-child{flex:1 1 auto;min-width:0}
+body.immersive-mode .stage-head h2{font-size:clamp(16px,2.4vw,22px)}
+body.immersive-mode .zoom-controls{width:auto;flex-wrap:wrap;justify-content:flex-end}
+body.immersive-mode .progress-strip{margin-bottom:8px}
+body.immersive-mode .canvas-wrap{height:calc(100% - 94px)!important;min-height:0!important;max-height:none!important}
+body.immersive-mode #art{width:100%!important;height:100%!important;min-height:0!important;max-height:none!important}
+body.immersive-mode .mobile-drawing-dock{
+ display:block!important;position:fixed!important;z-index:1100!important;
+ left:0!important;right:0!important;bottom:0!important;
+}
+body.immersive-mode .mobile-dock-palette{max-width:100%}
+body.immersive-mode #fullscreenToggle{background:#6f72e9;color:#fff}
+@media(max-width:560px){
+ body.immersive-mode .stage-card{padding:7px 8px calc(116px + env(safe-area-inset-bottom))!important}
+ body.immersive-mode .stage-head{gap:4px}
+ body.immersive-mode .zoom-controls{gap:4px}
+ body.immersive-mode .zoom-btn{width:30px;height:30px}
+ body.immersive-mode .zoom-reset{padding:7px 8px;font-size:11px}
+ body.immersive-mode .progress-strip{font-size:10px;padding:6px}
+ body.immersive-mode .canvas-wrap{height:calc(100% - 106px)!important}
+}
+@media(orientation:landscape) and (max-height:520px){
+ body.immersive-mode .stage-card{padding-bottom:84px!important}
+ body.immersive-mode .stage-head{padding-bottom:3px}
+ body.immersive-mode .progress-strip{padding:4px;margin-bottom:4px}
+ body.immersive-mode .canvas-wrap{height:calc(100% - 76px)!important}
+}
+
 </style>
 </head>
 <body>
@@ -681,6 +726,30 @@ function initMobileDrawingDock(){
 }
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMobileDrawingDock,{once:true});
 else initMobileDrawingDock();
+
+
+/* Full-screen mode uses a reversible app layout, preserving the current drawing and progress. */
+(function(){
+ const toggle=document.getElementById('fullscreenToggle');
+ if(!toggle)return;
+ const sync=()=>{
+  const active=document.body.classList.contains('immersive-mode');
+  toggle.textContent=active?'✕ Exit':'⛶ Expand';
+  toggle.setAttribute('aria-label',active?'Exit full-screen colouring mode':'Enter full-screen colouring mode');
+  toggle.title=active?'Return to the full game':'Full-screen colouring';
+ };
+ toggle.addEventListener('click',()=>{
+  document.body.classList.toggle('immersive-mode');
+  sync();
+  updateZoom();
+ });
+ document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.body.classList.contains('immersive-mode')){
+   document.body.classList.remove('immersive-mode');sync();updateZoom();
+  }
+ });
+ sync();
+})();
 
 </script>
 
