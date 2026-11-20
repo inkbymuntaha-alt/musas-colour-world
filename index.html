@@ -197,6 +197,46 @@ const pages=[
 {id:'pine',name:'Tall Pine Tree',emoji:'🌲',regions:[['top','M400 45 L530 220 H460 L570 355 H470 L590 480 H210 L330 355 H230 L340 220 H270Z'],['trunk','M360 450 H440 V550 H360Z'],['star','M400 20 L415 45 L445 48 L423 68 L430 95 L400 80 L370 95 L377 68 L355 48 L385 45Z']]},
 {id:'appletree',name:'Apple Blossom Tree',emoji:'🍎',regions:[['trunk','M350 300 Q400 270 450 300 L475 540 H325Z'],['crown1','M400 65 Q500 45 530 155 Q650 145 610 270 Q590 360 480 340 Q400 410 320 340 Q190 365 190 245 Q185 145 285 145 Q300 55 400 65Z'],['crown2','M280 210 Q340 155 395 220 Q430 300 335 325 Q250 315 280 210Z'],['crown3','M425 190 Q515 140 560 225 Q575 310 475 325 Q405 285 425 190Z'],['apple1','M320 180 Q345 145 370 180 Q400 145 425 180 Q425 230 370 250 Q320 230 320 180Z'],['apple2','M470 265 Q495 230 520 265 Q550 235 570 270 Q570 315 520 335 Q470 315 470 265Z']]}
 
+,{id:'racecar',name:'Turbo Racing Car',emoji:'🏎️',regions:[
+ ['carBody','M120 365 Q155 285 280 275 L385 175 H560 Q635 215 680 340 L730 385 L700 445 H105Z'],
+ ['window','M320 280 L405 205 H545 Q590 235 615 300Z'],
+ ['spoiler','M150 300 H260 L245 325 H145Z'],
+ ['wheelL','M220 400 m-65 0 a65 65 0 1 0 130 0 a65 65 0 1 0 -130 0Z'],
+ ['wheelR','M585 400 m-65 0 a65 65 0 1 0 130 0 a65 65 0 1 0 -130 0Z'],
+ ['stripe','M300 340 L610 340 L625 365 H285Z']
+]},
+{id:'robot',name:'Power Robot',emoji:'🤖',regions:[
+ ['head','M285 100 Q285 70 320 70 H480 Q515 70 515 110 V270 H285Z'],
+ ['earL','M245 155 H285 V230 H245Z'],['earR','M515 155 H555 V230 H515Z'],
+ ['eyeL','M330 145 Q355 120 380 145 V190 H330Z'],['eyeR','M420 145 Q445 120 470 145 V190 H420Z'],
+ ['mouth','M350 220 H450 V245 H350Z'],
+ ['body','M260 300 Q260 275 295 275 H505 Q540 275 540 310 V465 H260Z'],
+ ['panel','M345 325 H455 V405 H345Z'],
+ ['armL','M200 310 H260 V435 H200Z'],['armR','M540 310 H600 V435 H540Z'],
+ ['legL','M300 465 H370 V545 H300Z'],['legR','M430 465 H500 V545 H430Z']
+]},
+{id:'superhero',name:'Superhero Adventure',emoji:'🦸',regions:[
+ ['cape','M285 185 Q180 235 155 500 Q285 465 400 540 Q515 465 645 500 Q620 235 515 185Z'],
+ ['head','M335 90 Q400 45 465 90 L480 195 Q400 245 320 195Z'],
+ ['mask','M315 125 Q400 95 485 125 L470 175 Q400 150 330 175Z'],
+ ['body','M300 220 Q400 185 500 220 L535 410 H265Z'],
+ ['emblem','M400 255 L435 315 L500 325 L450 370 L465 435 L400 400 L335 435 L350 370 L300 325 L365 315Z'],
+ ['armL','M300 235 L225 280 L180 410 L235 430 L320 315Z'],
+ ['armR','M500 235 L575 280 L620 410 L565 430 L480 315Z'],
+ ['legL','M320 400 H390 L375 550 H295Z'],['legR','M410 400 H480 L505 550 H425Z']
+]},
+{id:'spaceexplorer',name:'Space Explorer',emoji:'🧑‍🚀',regions:[
+ ['helmet','M260 190 Q260 55 400 45 Q540 55 540 190 V290 H260Z'],
+ ['visor','M300 155 Q400 95 500 155 V245 Q400 295 300 245Z'],
+ ['neck','M350 285 H450 V330 H350Z'],
+ ['suit','M275 330 Q275 300 320 300 H480 Q525 300 525 340 L550 500 H250Z'],
+ ['badge','M355 355 H445 V425 H355Z'],
+ ['armL','M275 345 L210 385 L185 485 L245 500 L315 400Z'],
+ ['armR','M525 345 L590 385 L615 485 L555 500 L485 400Z'],
+ ['legL','M300 490 H385 V565 H285Z'],['legR','M415 490 H500 V565 H405Z'],
+ ['pack','M235 350 H275 V465 H235Z']
+]}
+
 ];
 
 // Add 475 deterministic, original variations to make a 500-page library.
@@ -267,7 +307,7 @@ function generatedRegions(kind,v){
   ['sprinkleR',`M${435+a} 275 l35 -12 12 25 -35 12Z`]
  ];
 }
-for(let n=0;n<479;n++){
+for(let n=0;n<475;n++){
  const themeIndex=n%generatedThemes.length,theme=generatedThemes[themeIndex],variant=Math.floor(n/generatedThemes.length)+1;
  pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0]+' '+String(variant).padStart(2,'0'),emoji:theme[1],kind:theme[2],regions:generatedRegions(theme[2],n+1)});
 }
