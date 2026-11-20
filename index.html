@@ -441,7 +441,7 @@ function generatedRegions(kind,v,themeIndex){
  const baseIndex=themeIndex%25;
  const special=silhouettes[baseIndex];
  if(special){
-  const varied=special.map(([name,path],i)=>[name,path.replace(/(\d+)/g,(m)=>String(Math.max(20,Math.min(760,Number(m)+(i%2?shift:-shift)))) )]);
+  const varied=[];
   const scene= Math.floor(themeIndex/25)%8;
   const scenery=[
    [['sun','M650 85 a42 42 0 1 0 0.1 0Z'],['cloud','M70 150 Q70 115 110 120 Q125 75 170 105 Q210 85 225 130 Q255 145 230 170 H95Z'],['hill','M20 520 Q160 390 300 520Z']],
@@ -454,6 +454,7 @@ function generatedRegions(kind,v,themeIndex){
    [['balloon1','M110 125 Q70 65 110 45 Q150 65 110 125Z'],['balloon2','M690 125 Q650 65 690 45 Q730 65 690 125Z'],['gift','M300 460 H500 V560 H300Z']]
   ];
   for(const [name,path] of scenery[scene]) varied.push([name,path]);
+  special.forEach(([name,path],i)=>varied.push([name,path.replace(/(\d+)/g,(m)=>String(Math.max(20,Math.min(760,Number(m)+(i%2?shift:-shift)))) )]));
   return varied;
  }
  const a=((v-1)%25)*2,b=(Math.floor((v-1)/25)%20)*2,c=(v%11)*2;
