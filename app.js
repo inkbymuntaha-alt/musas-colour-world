@@ -13,7 +13,7 @@ page.regions.forEach((r,i)=>{const p=pathOf(r),fill=(fills[page.id]||{})[i]||'#f
 ctx.save();ctx.strokeStyle='#1e293b';ctx.lineWidth=4;ctx.lineJoin='round';ctx.lineCap='round';page.regions.forEach(r=>{ctx.stroke(pathOf(r))});ctx.restore();drawFx()}
 function snapshot(){history.push(JSON.stringify({fills:JSON.parse(JSON.stringify(fills)),strokes:JSON.parse(JSON.stringify(strokesByPage)),page:page.id}));if(history.length>20)history.shift();redo.length=0}
 function restore(s){const x=JSON.parse(s);Object.keys(fills).forEach(k=>delete fills[k]);Object.assign(fills,x.fills);Object.keys(strokesByPage).forEach(k=>delete strokesByPage[k]);Object.assign(strokesByPage,x.strokes||{});render();save()}
-function undo(){if(!history.length)return;redo.push(JSON.stringify({fills:JSON.parse(JSON.stringify(fills)),page:page.id}));restore(history.pop())}
+function undo(){if(!history.length)return;redo.push(JSON.stringify({fills:JSON.parse(JSON.stringify(fills)),strokes:JSON.parse(JSON.stringify(strokesByPage)),page:page.id}));restore(history.pop())}
 function redoDo(){if(!redo.length)return;history.push(JSON.stringify({fills:JSON.parse(JSON.stringify(fills)),page:page.id}));restore(redo.pop())}
 function save(){try{localStorage.setItem('mcw-fills',JSON.stringify(fills));localStorage.setItem('mcw-strokes',JSON.stringify(strokesByPage));localStorage.setItem('mcw-stars',JSON.stringify([...stars]));localStorage.setItem('mcw-gallery',JSON.stringify(gallery))}catch(e){}}
 function point(e){const r=art.getBoundingClientRect(),sx=(e.clientX-r.left)/r.width,sy=(e.clientY-r.top)/r.height;return {x:sx*W,y:sy*H}}
