@@ -652,12 +652,13 @@ document.getElementById('share').onclick=async()=>{const btn=document.getElement
 buildPage('lion');activePageButton();updateZoom();updateProgress();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}))}
 
-/* Mobile quick-draw dock mirrors the existing tools and all 120 palette colours. */
-(function(){
+/* Mobile dock initializes after its markup exists (script is above dock in document). */
+function initMobileDrawingDock(){
  const dock=document.getElementById('mobileDrawingDock');
  const quickPalette=document.getElementById('mobileDockPalette');
- if(!dock||!quickPalette)return;
- document.querySelectorAll('[data-quick-tool]').forEach(btn=>{
+ if(!dock||!quickPalette||dock.dataset.initialized==='true')return;
+ dock.dataset.initialized='true';
+ dock.querySelectorAll('[data-quick-tool]').forEach(btn=>{
   btn.addEventListener('click',()=>{
    setTool(btn.dataset.quickTool);
    dock.querySelectorAll('[data-quick-tool]').forEach(x=>x.classList.toggle('active',x===btn));
@@ -677,7 +678,9 @@ if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.se
   quickPalette.append(b);
  });
  quickPalette.firstElementChild?.classList.add('active');
-})();
+}
+if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initMobileDrawingDock,{once:true});
+else initMobileDrawingDock();
 
 </script>
 
