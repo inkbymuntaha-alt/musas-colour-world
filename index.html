@@ -365,7 +365,7 @@ body.immersive-mode #fullscreenToggle{background:#6f72e9;color:#fff}
   <section class="control-panel"><h3>🖌️ Painting tools</h3><div class="toolrow"><button class="tool active" data-tool="fill">🪣 Fill</button><button class="tool" data-tool="brush">🖍️ Brush</button><button class="tool" data-tool="eraser">🧽 Eraser</button></div></section>
   <section class="control-panel magic-panel"><h3>⚔️ Adventure brushes</h3><div class="toolrow magic-brushes"><button class="tool magic-brush active" data-brush="classic">🖍️ Classic</button><button class="tool magic-brush" data-brush="fire">🔥 Fire</button><button class="tool magic-brush" data-brush="electric">⚡ Electric</button><button class="tool magic-brush" data-brush="ice">🧊 Ice</button></div></section>
   <section><h3>Brush size <span id="sizeLabel">18</span></h3><input class="range" id="size" type="range" min="5" max="55" value="18"></section>
-  <section class="control-panel"><h3>🐾 Colouring pages</h3><div class="categories" id="categories"></div></section>
+  <section class="control-panel"><h3>🐾 Colouring pages</h3><label for="pageSort" style="display:block;font-size:12px;font-weight:800;margin:5px 0">Sort pictures</label><select id="pageSort" aria-label="Sort colouring pages" style="width:100%;padding:9px;border:1px solid #e5e7eb;border-radius:10px;background:#fff;font-weight:800;margin-bottom:8px"><option value="az">A–Z</option><option value="za">Z–A</option><option value="low">Low to high</option><option value="high">High to low</option></select><div class="categories" id="categories"></div></section>
   <section class="bottom-tools"><button class="btn" id="clear">Clear page</button><button class="btn" id="random">Surprise me ✨</button></section>
   <button class="btn" id="hearWow" style="width:100%;padding:13px;background:linear-gradient(100deg,#d9f5ff,#e8dcff);font-weight:900">🔊 Hear another Wow Musa!</button>
   <button class="btn" id="openTrophies" style="width:100%;padding:13px;background:linear-gradient(100deg,#fff0a8,#f3dcff);font-weight:900">🏆 Open my Trophy Room</button>
@@ -388,7 +388,67 @@ const generatedThemes=[
  ['Peacock','🦚','winged'],['Kingfisher','🐦','winged'],['Monarch Butterfly','🦋','winged'],['Dragonfly','🪰','winged'],['Crocodile','🐊','creature'],
  ['Botanical Garden','🌿','plant'],['Ancient Oak Tree','🌳','plant'],['Historic Cathedral','⛪','building'],['Space Shuttle','🛰️','ride'],['Rocket Launch Vehicle','🚀','ride']
 ];
-function generatedRegions(kind,v){
+function generatedRegions(kind,v,themeIndex){
+ const shift=((v-1)%7)*3;
+ // Twenty-five genuinely different subject silhouettes; each category has its own
+ // anatomy rather than reusing one generic creature/wing/plant outline.
+ const silhouettes=[
+  // elephant
+  [['body',`M205 300 Q205 205 325 205 Q430 170 505 245 Q555 285 535 390 L510 485 H445 L435 390 H355 L345 485 H280 L275 385 Q205 375 205 300Z`],['trunk',`M475 245 Q555 230 570 300 Q590 380 550 440 Q530 470 510 445 Q530 390 515 350 Q485 330 455 345Z`],['ear',`M285 245 Q180 125 150 245 Q145 350 265 365Z`]],
+  // tiger
+  [['body',`M190 300 Q235 205 395 220 Q540 205 590 300 L550 400 Q420 450 260 400Z`],['head',`M480 230 Q555 165 620 225 L635 305 Q600 365 520 345 L470 300Z`],['tail',`M205 325 Q105 275 115 365 Q120 435 185 415`]],
+  // snow leopard
+  [['body',`M190 305 Q265 205 430 220 Q545 230 590 310 L555 390 Q405 445 250 395Z`],['head',`M500 230 Q580 180 630 245 L615 330 535 345 485 300Z`],['tail',`M220 350 Q95 330 110 430 Q140 490 220 420`]],
+  // fox
+  [['body',`M180 325 Q260 225 430 245 Q535 255 570 335 L520 400 Q365 440 220 390Z`],['head',`M465 250 L590 205 565 315 500 350 445 310Z`],['tail',`M220 340 Q90 250 75 355 Q95 455 235 400Z`]],
+  // wolf
+  [['body',`M180 300 Q270 215 430 225 Q540 230 590 310 L550 395 Q390 440 230 390Z`],['head',`M485 230 L565 160 585 265 645 300 570 345 495 310Z`],['tail',`M210 320 Q115 260 90 340 Q100 410 205 390Z`]],
+  // bear
+  [['body',`M190 300 Q220 185 400 195 Q565 205 595 330 L550 445 H250 Q185 400 190 300Z`],['head',`M300 205 Q285 120 370 115 Q455 115 465 210Z`],['ear',`M305 145 Q270 90 325 85 Q365 95 350 145Z`]],
+  // panda
+  [['body',`M205 300 Q235 190 400 195 Q565 205 590 330 L550 445 H250 Q195 400 205 300Z`],['head',`M295 210 Q280 125 400 120 Q520 125 505 220Z`],['patch',`M330 190 Q300 155 315 225 Q340 250 355 215Z`]],
+  // giraffe
+  [['body',`M245 330 Q270 250 440 260 Q535 270 555 350 L520 410 H265Z`],['neck',`M430 290 Q440 150 465 100 L530 105 Q520 205 515 310Z`],['head',`M455 110 Q450 55 520 55 L570 100 535 145Z`]],
+  // rhino
+  [['body',`M175 300 Q230 200 420 220 Q555 230 595 330 L550 435 H240 Q170 390 175 300Z`],['head',`M485 235 Q570 205 630 275 L610 355 520 360 470 300Z`],['horn',`M570 255 L650 210 615 290Z`]],
+  // horse
+  [['body',`M175 285 Q270 205 445 235 Q545 250 575 330 L540 390 Q380 425 220 380Z`],['neck',`M430 270 Q455 175 520 150 L570 195 530 315Z`],['head',`M510 160 L605 165 620 230 555 260 520 220Z`],['tail',`M195 280 Q115 225 120 330 Q135 375 190 350Z`]],
+  // sea turtle
+  [['shell',`M190 300 Q205 175 400 165 Q595 175 610 300 Q590 415 400 425 Q210 415 190 300Z`],['head',`M570 270 Q655 245 690 305 Q670 365 590 345Z`],['flipper',`M260 220 Q150 125 125 205 L225 315Z`],['flipper2',`M500 380 Q590 470 640 420 L550 340Z`]],
+  // whale
+  [['body',`M115 315 Q200 160 440 190 Q575 210 650 305 Q575 405 420 430 Q210 445 115 315Z`],['tail',`M115 315 Q35 230 55 175 Q125 200 165 280 Q125 375 55 425 Q35 360 115 315Z`],['fin',`M365 375 Q400 500 485 465 Q455 390 430 365Z`]],
+  // shark
+  [['body',`M90 315 Q220 195 465 245 L610 180 580 300 690 320 585 355 620 455 465 390 Q220 435 90 315Z`],['fin',`M360 255 L430 125 480 260Z`],['sidefin',`M390 365 L315 455 440 395Z`]],
+  // eagle
+  [['body',`M350 205 Q410 155 470 215 L455 385 Q410 450 365 385Z`],['wingL',`M380 255 Q220 90 85 180 Q160 330 365 350Z`],['wingR',`M440 255 Q600 90 715 180 Q640 330 455 350Z`],['beak',`M465 225 L535 255 465 280Z`]],
+  // owl
+  [['body',`M265 180 Q400 85 535 180 Q585 320 520 465 Q400 545 280 465 Q215 320 265 180Z`],['wingL',`M275 230 Q165 280 245 430 L325 390Z`],['wingR',`M525 230 Q635 280 555 430 L475 390Z`],['ear',`M275 180 L245 85 340 145Z`]],
+  // peacock
+  [['body',`M365 265 Q400 210 435 265 L450 475 350 475Z`],['fanL',`M390 285 Q110 80 145 370 Q210 485 365 390Z`],['fanR',`M410 285 Q690 80 655 370 Q590 485 435 390Z`],['crest',`M390 220 L365 145 400 180 435 145 410 220Z`]],
+  // kingfisher
+  [['body',`M220 280 Q300 190 455 220 Q540 245 570 330 Q490 405 330 390 Q240 370 220 280Z`],['head',`M410 220 Q470 135 555 185 L590 265 490 305Z`],['beak',`M555 210 L690 245 565 275Z`],['wing',`M285 285 Q390 225 485 295 L390 365Z`]],
+  // butterfly
+  [['wingL',`M390 280 Q265 65 130 170 Q65 300 350 390 Q405 360 390 280Z`],['wingR',`M410 280 Q535 65 670 170 Q735 300 450 390 Q395 360 410 280Z`],['lowerL',`M380 330 Q190 300 185 465 Q245 555 380 405Z`],['lowerR',`M420 330 Q610 300 615 465 Q555 555 420 405Z`],['body',`M390 220 Q400 190 410 220 L420 435 380 435Z`]],
+  // dragonfly
+  [['body',`M390 160 Q400 130 410 160 L420 510 380 510Z`],['wingL',`M385 250 Q175 70 105 170 Q170 285 390 310Z`],['wingR',`M415 250 Q625 70 695 170 Q630 285 410 310Z`],['lowerL',`M385 315 Q210 250 165 390 Q240 455 390 365Z`],['lowerR',`M415 315 Q590 250 635 390 Q560 455 410 365Z`]],
+  // crocodile
+  [['body',`M160 300 Q255 220 500 255 L610 290 500 380 Q260 420 160 340Z`],['snout',`M480 250 L690 270 665 340 490 355Z`],['tail',`M170 305 Q70 245 55 320 Q85 390 185 355Z`],['leg',`M270 350 L225 450 325 410Z`],['leg2',`M465 350 L510 450 555 390Z`]],
+  // botanical garden / floral
+  [['flower',`M400 170 C300 100 250 210 350 280 C220 280 245 410 375 365 C320 470 440 520 435 380 C540 455 625 350 470 315 C590 225 490 125 420 250Z`],['stem',`M390 350 L410 350 430 560 375 560Z`],['leaf',`M395 445 Q250 350 255 485 Q320 545 395 470Z`]],
+  // oak
+  [['trunk',`M350 300 H450 L485 565 H315Z`],['crown',`M400 55 Q510 25 535 145 Q665 135 630 265 Q620 380 500 375 Q400 465 300 375 Q180 395 170 265 Q145 135 275 145 Q290 35 400 55Z`],['branch',`M370 310 L260 220 285 340Z`]],
+  // cathedral
+  [['body',`M200 250 H600 V545 H200Z`],['towerL',`M220 130 H315 V545 H220Z`],['towerR',`M485 130 H580 V545 H485Z`],['spireL',`M205 135 L268 35 330 135Z`],['spireR',`M475 135 L532 35 595 135Z`],['roof',`M290 255 L400 105 510 255Z`]],
+  // space shuttle
+  [['fuselage',`M400 55 Q510 185 475 440 L400 540 325 440 Q290 185 400 55Z`],['wingL',`M330 300 L170 455 340 430Z`],['wingR',`M470 300 L630 455 460 430Z`],['tail',`M365 430 L330 535 400 500 470 535 435 430Z`],['window',`M370 180 Q400 145 430 180 L425 245 H375Z`]],
+  // rocket
+  [['body',`M400 45 Q520 185 485 430 L445 500 H355 L315 430 Q280 185 400 45Z`],['finL',`M325 350 L205 490 335 455Z`],['finR',`M475 350 L595 490 465 455Z`],['window',`M365 205 Q400 170 435 205 L430 270 H370Z`],['flame',`M355 485 Q400 610 445 485 Q425 555 400 570 Q375 555 355 485Z`]]
+ ];
+ const special=silhouettes[themeIndex];
+ if(special){
+  const varied=special.map(([name,path],i)=>[name,path.replace(/(\d+)/g,(m)=>String(Math.max(20,Math.min(760,Number(m)+(i%2?shift:-shift)))) )]);
+  return varied;
+ }
  const a=((v-1)%25)*2,b=(Math.floor((v-1)/25)%20)*2,c=(v%11)*2;
  if(kind==='creature')return [
   ['body',`M${255-a} 315 Q${245-a} ${180+b} 400 ${185+c} Q${555+a} ${175+b} ${545+a} 320 L${510+a} 465 Q400 ${505+c} ${290-a} 465Z`],
@@ -446,7 +506,7 @@ function generatedRegions(kind,v){
 }
 for(let n=0;n<500;n++){
  const themeIndex=n%generatedThemes.length,theme=generatedThemes[themeIndex],variant=Math.floor(n/generatedThemes.length)+1;
- pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0]+' · Study '+String(variant).padStart(2,'0'),emoji:theme[1],kind:theme[2],regions:generatedRegions(theme[2],n+1)});
+ pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0]+' · Study '+String(variant).padStart(2,'0'),emoji:theme[1],kind:theme[2],regions:generatedRegions(theme[2],n+1,themeIndex)});
 }
 
 const progressKey='musas-colour-world-progress-v1';
@@ -568,7 +628,26 @@ document.querySelectorAll('.tool[data-tool]').forEach(b=>b.addEventListener('cli
 document.querySelectorAll('.magic-brush').forEach(b=>b.addEventListener('click',()=>{brushStyle=b.dataset.brush;document.querySelectorAll('.magic-brush').forEach(x=>x.classList.toggle('active',x===b));document.getElementById('tipText').textContent='✨ '+b.textContent.trim()+' brush selected — choose Brush to paint!'}));
 const pal=document.getElementById('palette');colors.forEach(c=>{const b=document.createElement('button');b.className='swatch';b.style.background=c;b.title='Colour '+(colors.indexOf(c)+1);b.setAttribute('aria-label','Choose colour '+(colors.indexOf(c)+1));b.addEventListener('click',()=>{chosen=c;document.querySelectorAll('.swatch').forEach(x=>x.classList.remove('active'));b.classList.add('active')});pal.append(b)});pal.firstChild.classList.add('active');
 document.getElementById('size').addEventListener('input',e=>{size=+e.target.value;document.getElementById('sizeLabel').textContent=size});
-const cats=document.getElementById('categories');pages.forEach(p=>{const b=document.createElement('button');b.className='category';b.textContent=p.emoji+' '+p.name;b.addEventListener('click',()=>{buildPage(p.id);document.querySelectorAll('.category').forEach(x=>x.classList.remove('active'));b.classList.add('active')});cats.append(b)});
+const cats=document.getElementById('categories');
+let pageSortMode='az';
+function renderPagePicker(){
+ const ordered=[...pages];
+ const studyNumber=p=>Number((p.name.match(/Study (\\d+)/)||[])[1]||0);
+ if(pageSortMode==='az')ordered.sort((a,b)=>a.name.localeCompare(b.name));
+ else if(pageSortMode==='za')ordered.sort((a,b)=>b.name.localeCompare(a.name));
+ else if(pageSortMode==='low')ordered.sort((a,b)=>studyNumber(a)-studyNumber(b)||a.name.localeCompare(b.name));
+ else ordered.sort((a,b)=>studyNumber(b)-studyNumber(a)||a.name.localeCompare(b.name));
+ cats.replaceChildren();
+ ordered.forEach(p=>{
+  const b=document.createElement('button');b.className='category';b.dataset.pageId=p.id;
+  b.textContent=p.emoji+' '+p.name;
+  b.addEventListener('click',()=>{buildPage(p.id);activePageButton()});
+  cats.append(b);
+ });
+ activePageButton();
+}
+document.getElementById('pageSort').addEventListener('change',e=>{pageSortMode=e.target.value;renderPagePicker()});
+renderPagePicker();
 
 // A joyful finish: auto-celebrate when every outlined part has been coloured.
 function checkFinished(){if(celebrationShown)return;const page=pages.find(p=>p.id===current);if(!page||!page.regions.length)return;const done=page.regions.every(([name])=>{const region=document.getElementById('region-'+name);if(!region)return false;const fill=(region.getAttribute('fill')||'').toLowerCase();const filled=fill!==''&&fill!=='#ffffff'&&fill!=='white'&&fill!=='rgb(255, 255, 255)';const painted=strokes.some(st=>st.region===name&&st.color&&st.color!=='#ffffff');return filled||painted});if(done){saveCurrentPainting();awardStar();showCelebration()}}
@@ -595,7 +674,7 @@ document.getElementById('hearWow').addEventListener('click',()=>speakWowMusa());
 document.getElementById('celebrateClose').addEventListener('click',hideCelebration);
 document.getElementById('celebration').addEventListener('click',e=>{if(e.target.id==='celebration')hideCelebration()});
 
-function activePageButton(){[...cats.children].forEach((b,i)=>b.classList.toggle('active',pages[i].id===current))}
+function activePageButton(){[...cats.children].forEach(b=>b.classList.toggle('active',b.dataset.pageId===current))}
 document.getElementById('undo').onclick=()=>{if(!undoStack.length)return;redoStack.push(JSON.stringify({fills:[...document.querySelectorAll('.region')].map(x=>x.getAttribute('fill')),strokes}));restore(undoStack.pop())};
 document.getElementById('redo').onclick=()=>{if(!redoStack.length)return;undoStack.push(JSON.stringify({fills:[...document.querySelectorAll('.region')].map(x=>x.getAttribute('fill')),strokes}));restore(redoStack.pop())};
 function resetPage(){snapshot();document.querySelectorAll('.region').forEach(x=>x.setAttribute('fill','#ffffff'));strokes=[];celebrationShown=false;hideCelebration();renderStrokes();saveCurrentPainting()}
