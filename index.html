@@ -223,6 +223,58 @@ button,.tool,.category,.swatch{touch-action:manipulation}
  .tools>section:first-child .palette{grid-template-columns:repeat(7,minmax(0,1fr));gap:7px}
 }
 
+
+/* Mobile controls: avoid a tiny nested colour window; let the page scroll through all swatches. */
+@media(max-width:560px){
+ .tools{gap:12px}
+ .tools>section:first-child{
+  width:100%;
+  min-width:0;
+  overflow:visible!important;
+  padding:12px!important;
+ }
+ .tools>section:first-child h3{
+  position:relative;
+  display:block;
+  margin:0 0 10px;
+  padding:2px 0 4px;
+  line-height:1.35;
+  overflow:visible;
+ }
+ .tools>section:first-child .palette{
+  display:grid;
+  grid-template-columns:repeat(10,minmax(0,1fr));
+  gap:8px 6px;
+  width:100%;
+  max-height:none!important;
+  min-height:0;
+  overflow:visible!important;
+  padding:4px 2px 8px;
+  align-content:start;
+ }
+ .tools>section:first-child .swatch{
+  width:100%;
+  max-width:34px;
+  min-width:0;
+  aspect-ratio:1;
+  justify-self:center;
+ }
+ .tools>section:nth-child(4){padding:12px!important}
+ .tools>section:nth-child(4) h3{line-height:1.35}
+ .tools>section:nth-child(5){padding:12px!important}
+ .tools>section:nth-child(5) .categories{
+  max-height:min(42svh,340px);
+  overflow-y:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+  padding:3px 3px 8px;
+ }
+}
+@media(max-width:360px){
+ .tools>section:first-child .palette{grid-template-columns:repeat(9,minmax(0,1fr));gap:7px 5px}
+ .tools>section:first-child .swatch{max-width:32px}
+}
+
 </style>
 </head>
 <body>
