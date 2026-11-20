@@ -379,118 +379,14 @@ body.immersive-mode #fullscreenToggle{background:#6f72e9;color:#fff}
 <script>
 const colors=['#ef4444','#f97316','#f59e0b','#eab308','#84cc16','#22c55e','#10b981','#14b8a6','#06b6d4','#0ea5e9','#3b82f6','#6366f1','#8b5cf6','#a855f7','#d946ef','#ec4899','#f43f5e','#fb7185','#be123c','#9f1239','#7c2d12','#a16207','#854d0e','#4d7c0f','#166534','#115e59','#155e75','#1e40af','#3730a3','#5b21b6','#701a75','#831843','#475569','#64748b','#334155','#1f2937','#111827','#ffffff','#e5e7eb','#9ca3af','#6b7280','#374151','#000000','#fbcfe8','#fed7aa','#fef3c7','#d9f99d','#bbf7d0','#a7f3d0','#a5f3fc','#bae6fd','#bfdbfe','#c7d2fe','#ddd6fe','#f5d0fe','#fce7f3','#fecdd3','#fca5a5','#fdba74','#fde68a','#bef264','#86efac','#6ee7b7','#67e8f9','#7dd3fc','#93c5fd','#a5b4fc','#c4b5fd','#e9d5ff','#f0abfc','#f9a8d4','#fda4af','#c084fc','#60a5fa','#34d399','#facc15','#fb923c','#f87171','#a3e635','#4ade80','#2dd4bf','#22d3ee','#38bdf8','#818cf8','#a78bfa','#e879f9','#f472b6','#fda4af','#d6d3d1','#a8a29e','#78716c','#57534e','#292524','#f5f5f4','#e7e5e4','#d6d3d1','#a3a3a3','#737373','#525252','#262626','#171717','#fefce8','#f0fdf4','#eff6ff','#faf5ff','#fff1f2','#fff7ed','#ecfccb','#ccfbf1','#cffafe','#e0f2fe','#eef2ff','#fdf4ff','#fce7f3','#ffe4e6','#ffedd5','#fef9c3','#ecfccb','#dcfce7','#d1fae5','#cffafe','#e0f2fe','#dbeafe','#e0e7ff','#ede9fe','#fae8ff','#fce7f3','#ffe4e6'];
 let chosen=colors[0],tool='fill',brushStyle='classic',size=18,selected=null,strokes=[],undoStack=[],redoStack=[],current='lion',celebrationShown=false,celebrationTimer=null;
-const pages=[
-{id:'lion',name:'Little Lion',emoji:'🦁',regions:[['mane','M400 80 Q570 70 600 230 Q680 370 520 470 Q400 560 270 460 Q110 350 205 190 Q260 70 400 80Z'],['face','M300 190 Q400 130 500 190 L520 330 Q500 430 400 440 Q300 430 280 330Z'],['muzzle','M340 320 Q400 285 460 320 Q470 380 400 390 Q330 380 340 320Z'],['earL','M285 205 Q230 145 250 250Z'],['earR','M515 205 Q570 145 550 250Z'],['body','M310 430 Q400 400 490 430 L510 520 H290Z']]},
-{id:'puppy',name:'Happy Puppy',emoji:'🐶',regions:[
-['body','M250 240 Q270 145 390 160 Q500 160 530 270 L500 420 Q390 480 270 410Z'],
-['earL','M270 190 Q180 155 195 285 Q215 345 280 300Z'],['earR','M470 185 Q555 130 590 245 Q600 315 520 310Z'],
-['face','M275 205 Q390 145 510 210 L505 340 Q480 405 390 410 Q290 390 270 315Z'],
-['muzzle','M335 315 Q390 275 455 315 Q470 370 395 385 Q320 375 335 315Z'],
-['spot','M300 245 Q330 220 350 250 Q350 280 315 280Z'],['collar','M285 395 Q390 435 505 395 L490 435 Q390 470 300 430Z'],
-['leg1','M290 390 L350 410 L340 505 Q300 525 270 500Z'],['leg2','M440 410 L495 390 L525 500 Q500 530 460 505Z'],
-['tail','M515 265 Q625 220 620 330 Q610 365 575 350 Q600 320 565 315Z']]},
-{id:'cat',name:'Curious Kitty',emoji:'🐱',regions:[
-['body','M280 300 Q280 190 400 190 Q530 190 520 330 L500 460 Q400 510 300 455Z'],
-['head','M285 235 L270 100 L365 170 Q410 145 450 170 L535 100 L520 260 Q510 355 400 360 Q290 350 285 235Z'],
-['innerL','M295 155 L350 195 L310 235Z'],['innerR','M505 155 L455 195 L495 235Z'],
-['tail','M505 390 Q650 400 610 270 Q590 240 570 280 Q610 345 520 345Z'],
-['leg1','M315 420 L375 430 L365 520 L300 520Z'],['leg2','M430 430 L490 420 L510 520 L445 520Z'],
-['bib','M350 350 Q400 380 455 350 L470 435 Q400 475 335 435Z']]},
-{id:'butterfly',name:'Garden Butterfly',emoji:'🦋',regions:[
-['wingTL','M390 270 Q300 80 135 145 Q65 240 300 315Z'],['wingTR','M420 270 Q500 70 665 145 Q735 240 500 315Z'],
-['wingBL','M375 315 Q190 270 170 430 Q200 535 365 365Z'],['wingBR','M435 315 Q610 270 630 430 Q600 535 445 365Z'],
-['body','M390 205 Q410 180 430 205 L435 390 Q410 430 385 390Z']]},
-{id:'tree',name:'Wonderful Tree',emoji:'🌳',regions:[
-['trunk','M340 310 Q400 280 460 310 L485 530 L315 530Z'],
-['leaf1','M400 60 Q500 45 525 155 Q630 145 610 260 Q590 345 475 325 Q400 390 325 325 Q205 355 190 245 Q180 145 285 145 Q300 55 400 60Z'],
-['leaf2','M270 210 Q330 155 390 225 Q420 300 330 315 Q250 310 270 210Z'],
-['leaf3','M430 190 Q515 140 555 220 Q575 310 475 320 Q410 285 430 190Z']]},
-{id:'fish',name:'Little Fish',emoji:'🐠',regions:[
-['body','M180 300 Q280 120 520 220 Q600 270 520 360 Q300 470 180 300Z'],
-['tail','M520 285 L680 180 L665 420Z'],['finTop','M350 190 Q400 80 470 195Z'],['finBottom','M350 390 Q420 500 475 385Z'],
-['fin','M330 270 Q400 310 340 355Z']]},
-{id:'rocket',name:'Space Rocket',emoji:'🚀',regions:[
-['body','M310 390 Q270 180 400 65 Q530 180 490 390Z'],['window','M350 210 Q400 160 450 210 Q465 270 400 285 Q335 270 350 210Z'],
-['finL','M310 330 L220 455 L315 430Z'],['finR','M490 330 L580 455 L485 430Z'],['flame','M350 405 Q400 570 450 405 Q425 450 400 430 Q375 450 350 405Z']]},
-{id:'flower',name:'Sunny Flower',emoji:'🌼',regions:[
-['petal1','M400 220 Q320 160 345 80 Q400 30 455 80 Q480 160 400 220Z'],
-['petal2','M420 260 Q500 180 570 230 Q610 300 550 345 Q480 360 420 260Z'],
-['petal3','M420 320 Q500 390 455 475 Q400 520 350 475 Q320 390 420 320Z'],
-['petal4','M370 300 Q290 390 220 345 Q180 280 245 230 Q315 190 370 300Z'],
-['petal5','M390 260 Q310 200 350 130 Q400 95 450 130 Q490 205 410 260Z'],
-['center','M400 300 m-65 0 a65 65 0 1 0 130 0 a65 65 0 1 0 -130 0Z'],
-['stem','M385 360 Q405 390 400 540 L430 540 Q430 400 415 360Z']]},
-{id:'castle',name:'Dream Castle',emoji:'🏰',regions:[
-['base','M190 270 H610 V510 H190Z'],['towerL','M205 170 H315 V510 H205Z'],['towerR','M485 170 H595 V510 H485Z'],
-['middle','M315 230 H485 V510 H315Z'],['roofL','M190 170 L260 65 L330 170Z'],['roofR','M470 170 L540 65 L610 170Z'],['roofM','M300 230 L400 115 L500 230Z'],
-['door','M355 390 Q400 330 445 390 V510 H355Z']]},
-{id:'elephant',name:'Gentle Elephant',emoji:'🐘',regions:[['body','M230 280 Q240 150 390 155 Q535 150 555 285 L530 440 Q400 500 270 430Z'],['ear','M260 220 Q130 160 150 320 Q175 400 285 350Z'],['trunk','M500 270 Q620 260 590 390 Q575 455 520 420 Q565 380 525 360Z'],['leg1','M285 400 H355 V520 H275Z'],['leg2','M435 410 H505 V520 H425Z'],['tusk','M500 355 Q550 370 530 420 Q500 400 500 355Z']]},
+const pages=[];
 
-{id:'turtle',name:'Tiny Turtle',emoji:'🐢',regions:[['shell','M210 300 Q220 145 400 150 Q580 145 590 300 Q560 440 400 440 Q240 440 210 300Z'],['head','M555 275 Q680 230 700 320 Q680 400 565 365Z'],['leg1','M260 390 Q200 430 220 500 Q280 520 320 440Z'],['leg2','M460 420 Q520 450 500 510 Q440 520 420 445Z'],['leg3','M270 220 Q220 160 190 210 L230 290Z'],['tail','M210 330 L150 370 L225 390Z']]},
-{id:'rabbit',name:'Bunny Friend',emoji:'🐰',regions:[['body','M280 300 Q300 190 410 210 Q530 220 520 360 L490 500 H300Z'],['head','M290 210 Q275 110 370 100 Q485 90 510 200 Q510 330 400 340 Q290 330 290 210Z'],['earL','M325 125 Q270 0 310 0 Q365 20 370 115Z'],['earR','M430 115 Q455 0 500 20 Q535 70 475 145Z'],['footL','M280 455 Q210 450 220 510 Q260 545 340 510Z'],['footR','M430 480 Q520 450 550 510 Q540 550 450 525Z']]},
-{id:'whale',name:'Happy Whale',emoji:'🐳',regions:[['body','M120 320 Q180 130 440 170 Q610 190 650 330 Q590 460 390 450 Q190 460 120 320Z'],['tail','M625 300 Q710 180 750 230 L700 340 Q760 420 710 440 L625 365Z'],['fin','M350 420 Q400 520 480 440Z'],['belly','M180 340 Q350 400 570 340 Q550 450 370 460 Q220 450 180 340Z']]},
-{id:'owl',name:'Sleepy Owl',emoji:'🦉',regions:[['body','M230 270 Q230 100 400 100 Q570 100 570 270 L550 490 H250Z'],['wingL','M250 270 Q120 280 200 430 L285 400Z'],['wingR','M550 270 Q680 280 600 430 L515 400Z'],['belly','M300 320 Q400 270 500 320 L490 490 H310Z'],['earL','M250 190 L210 80 L330 140Z'],['earR','M550 190 L590 80 L470 140Z']]},
-{id:'dino',name:'Friendly Dinosaur',emoji:'🦕',regions:[['body','M220 350 Q220 190 390 190 Q530 180 550 310 L610 350 L550 390 Q530 510 430 500 H280 Q230 470 220 350Z'],['neck','M440 220 Q450 80 570 100 Q650 130 600 250 L540 310Z'],['tail','M250 350 Q130 300 90 390 Q160 430 250 420Z'],['leg1','M300 450 H370 V540 H285Z'],['leg2','M440 450 H510 V540 H425Z'],['spike','M300 200 L330 130 L370 200 L410 120 L450 210 L490 145 L520 240Z']]},
-{id:'fox',name:'Clever Little Fox',emoji:'🦊',regions:[['body','M260 300 Q250 190 400 180 Q550 190 540 330 L500 470 H300Z'],['head','M275 240 L250 90 L365 170 Q410 145 455 170 L555 90 L525 260 Q510 365 400 375 Q290 365 275 240Z'],['earL','M285 170 L265 105 L330 165Z'],['earR','M515 170 L540 105 L475 165Z'],['tail','M510 350 Q680 280 690 420 Q650 520 530 455 L480 410Z'],['tip','M640 390 Q690 390 690 430 Q650 470 600 445Z'],['leg1','M300 420 H370 V520 H285Z'],['leg2','M430 420 H500 V520 H420Z']]},
-{id:'panda',name:'Bamboo Panda',emoji:'🐼',regions:[['body','M260 300 Q260 170 400 170 Q540 170 540 300 L510 500 H290Z'],['head','M270 220 Q270 90 400 90 Q530 90 530 220 Q530 350 400 350 Q270 350 270 220Z'],['earL','M275 140 Q220 50 300 70 Q350 80 330 155Z'],['earR','M470 155 Q450 80 500 70 Q580 50 525 150Z'],['patchL','M320 200 Q340 165 365 205 L355 260 Q315 270 320 200Z'],['patchR','M435 205 Q460 165 480 200 Q490 265 450 260Z'],['armL','M275 320 Q190 350 250 450 L320 420Z'],['armR','M525 320 Q610 350 550 450 L480 420Z'],['legL','M300 450 H380 V530 H285Z'],['legR','M420 450 H500 V530 H415Z']]},
-{id:'giraffe',name:'Sunny Giraffe',emoji:'🦒',regions:[['body','M300 270 Q300 180 400 180 Q500 180 500 280 L480 500 H320Z'],['neck','M350 170 L360 70 Q400 35 440 70 L455 190Z'],['head','M345 100 Q320 40 400 35 Q490 35 470 120 L450 175 H350Z'],['hornL','M360 55 L350 15 L375 15 L385 60Z'],['hornR','M430 55 L440 15 L465 15 L455 65Z'],['spot1','M330 280 Q360 250 380 290 L365 330 H330Z'],['spot2','M420 300 Q455 260 475 305 L455 345 H420Z'],['legL','M320 440 H385 V535 H305Z'],['legR','M420 440 H485 V535 H405Z'],['tail','M480 280 Q590 300 560 390 L530 390 Q550 330 480 330Z']]},
-{id:'bird',name:'Rainbow Songbird',emoji:'🐦',regions:[['body','M180 300 Q230 140 430 180 Q560 210 570 330 Q520 470 340 440 Q190 420 180 300Z'],['wing','M260 300 Q350 190 470 280 Q440 390 300 390Z'],['tail','M540 300 L690 220 L660 350 L700 430 L550 380Z'],['beak','M560 260 L680 300 L560 330Z'],['belly','M270 360 Q390 420 510 350 Q490 460 370 455 Q290 440 270 360Z'],['feet','M350 430 L340 500 M430 440 L440 500']]},
-{id:'pine',name:'Tall Pine Tree',emoji:'🌲',regions:[['top','M400 45 L530 220 H460 L570 355 H470 L590 480 H210 L330 355 H230 L340 220 H270Z'],['trunk','M360 450 H440 V550 H360Z'],['star','M400 20 L415 45 L445 48 L423 68 L430 95 L400 80 L370 95 L377 68 L355 48 L385 45Z']]},
-{id:'appletree',name:'Apple Blossom Tree',emoji:'🍎',regions:[['trunk','M350 300 Q400 270 450 300 L475 540 H325Z'],['crown1','M400 65 Q500 45 530 155 Q650 145 610 270 Q590 360 480 340 Q400 410 320 340 Q190 365 190 245 Q185 145 285 145 Q300 55 400 65Z'],['crown2','M280 210 Q340 155 395 220 Q430 300 335 325 Q250 315 280 210Z'],['crown3','M425 190 Q515 140 560 225 Q575 310 475 325 Q405 285 425 190Z'],['apple1','M320 180 Q345 145 370 180 Q400 145 425 180 Q425 230 370 250 Q320 230 320 180Z'],['apple2','M470 265 Q495 230 520 265 Q550 235 570 270 Q570 315 520 335 Q470 315 470 265Z']]}
-
-,{id:'racecar',name:'Turbo Racing Car',emoji:'🏎️',regions:[
- ['carBody','M120 365 Q155 285 280 275 L385 175 H560 Q635 215 680 340 L730 385 L700 445 H105Z'],
- ['window','M320 280 L405 205 H545 Q590 235 615 300Z'],
- ['spoiler','M150 300 H260 L245 325 H145Z'],
- ['wheelL','M220 400 m-65 0 a65 65 0 1 0 130 0 a65 65 0 1 0 -130 0Z'],
- ['wheelR','M585 400 m-65 0 a65 65 0 1 0 130 0 a65 65 0 1 0 -130 0Z'],
- ['stripe','M300 340 L610 340 L625 365 H285Z']
-]},
-{id:'robot',name:'Power Robot',emoji:'🤖',regions:[
- ['head','M285 100 Q285 70 320 70 H480 Q515 70 515 110 V270 H285Z'],
- ['earL','M245 155 H285 V230 H245Z'],['earR','M515 155 H555 V230 H515Z'],
- ['eyeL','M330 145 Q355 120 380 145 V190 H330Z'],['eyeR','M420 145 Q445 120 470 145 V190 H420Z'],
- ['mouth','M350 220 H450 V245 H350Z'],
- ['body','M260 300 Q260 275 295 275 H505 Q540 275 540 310 V465 H260Z'],
- ['panel','M345 325 H455 V405 H345Z'],
- ['armL','M200 310 H260 V435 H200Z'],['armR','M540 310 H600 V435 H540Z'],
- ['legL','M300 465 H370 V545 H300Z'],['legR','M430 465 H500 V545 H430Z']
-]},
-{id:'superhero',name:'Superhero Adventure',emoji:'🦸',regions:[
- ['cape','M285 185 Q180 235 155 500 Q285 465 400 540 Q515 465 645 500 Q620 235 515 185Z'],
- ['head','M335 90 Q400 45 465 90 L480 195 Q400 245 320 195Z'],
- ['mask','M315 125 Q400 95 485 125 L470 175 Q400 150 330 175Z'],
- ['body','M300 220 Q400 185 500 220 L535 410 H265Z'],
- ['emblem','M400 255 L435 315 L500 325 L450 370 L465 435 L400 400 L335 435 L350 370 L300 325 L365 315Z'],
- ['armL','M300 235 L225 280 L180 410 L235 430 L320 315Z'],
- ['armR','M500 235 L575 280 L620 410 L565 430 L480 315Z'],
- ['legL','M320 400 H390 L375 550 H295Z'],['legR','M410 400 H480 L505 550 H425Z']
-]},
-{id:'spaceexplorer',name:'Space Explorer',emoji:'🧑‍🚀',regions:[
- ['helmet','M260 190 Q260 55 400 45 Q540 55 540 190 V290 H260Z'],
- ['visor','M300 155 Q400 95 500 155 V245 Q400 295 300 245Z'],
- ['neck','M350 285 H450 V330 H350Z'],
- ['suit','M275 330 Q275 300 320 300 H480 Q525 300 525 340 L550 500 H250Z'],
- ['badge','M355 355 H445 V425 H355Z'],
- ['armL','M275 345 L210 385 L185 485 L245 500 L315 400Z'],
- ['armR','M525 345 L590 385 L615 485 L555 500 L485 400Z'],
- ['legL','M300 490 H385 V565 H285Z'],['legR','M415 490 H500 V565 H405Z'],
- ['pack','M235 350 H275 V465 H235Z']
-]}
-
-];
-
-// Add 475 deterministic, original variations to make a 500-page library.
 const generatedThemes=[
- ['Storybook Puppy','🐕','creature'],['Dream Kitty','🐈','creature'],['Cuddly Bear','🐻','creature'],
- ['Magic Bunny','🐇','creature'],['Clever Fox','🦊','creature'],['Little Panda','🐼','creature'],
- ['Royal Lion','🦁','creature'],['Gentle Elephant','🐘','creature'],['Sunny Giraffe','🦒','creature'],
- ['Dino Buddy','🦕','creature'],['Tiny Turtle','🐢','creature'],['Happy Whale','🐳','creature'],
- ['Rainbow Fish','🐠','winged'],['Songbird','🐦','winged'],['Garden Butterfly','🦋','winged'],
- ['Buzzy Bee','🐝','winged'],['Ladybug Pal','🐞','winged'],['Sleepy Owl','🦉','winged'],
- ['Unicorn Dream','🦄','creature'],['Friendly Dragon','🐉','creature'],
- ['Blooming Flower','🌺','plant'],['Magic Tree','🌳','plant'],['Mushroom Cottage','🍄','building'],
- ['Star Rocket','🚀','ride'],['Sweet Cupcake','🧁','treat']
+ ['African Elephant','🐘','creature'],['Bengal Tiger','🐅','creature'],['Snow Leopard','🐆','creature'],['Red Fox','🦊','creature'],['Gray Wolf','🐺','creature'],
+ ['Brown Bear','🐻','creature'],['Giant Panda','🐼','creature'],['Giraffe','🦒','creature'],['White Rhinoceros','🦏','creature'],['Wild Horse','🐎','creature'],
+ ['Sea Turtle','🐢','creature'],['Humpback Whale','🐋','creature'],['Great White Shark','🦈','creature'],['Bald Eagle','🦅','winged'],['Barn Owl','🦉','winged'],
+ ['Peacock','🦚','winged'],['Kingfisher','🐦','winged'],['Monarch Butterfly','🦋','winged'],['Dragonfly','🪰','winged'],['Crocodile','🐊','creature'],
+ ['Botanical Garden','🌿','plant'],['Ancient Oak Tree','🌳','plant'],['Mountain Landscape','🏔️','building'],['Vintage Locomotive','🚂','ride'],['Classic Sports Car','🏎️','ride']
 ];
 function generatedRegions(kind,v){
  const a=((v-1)%25)*2,b=(Math.floor((v-1)/25)%20)*2,c=(v%11)*2;
@@ -548,9 +444,9 @@ function generatedRegions(kind,v){
   ['sprinkleR',`M${435+a} 275 l35 -12 12 25 -35 12Z`]
  ];
 }
-for(let n=0;n<475;n++){
+for(let n=0;n<500;n++){
  const themeIndex=n%generatedThemes.length,theme=generatedThemes[themeIndex],variant=Math.floor(n/generatedThemes.length)+1;
- pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0]+' '+String(variant).padStart(2,'0'),emoji:theme[1],kind:theme[2],regions:generatedRegions(theme[2],n+1)});
+ pages.push({id:'studio-'+String(n+1).padStart(3,'0'),name:theme[0]+' · Study '+String(variant).padStart(2,'0'),emoji:theme[1],kind:theme[2],regions:generatedRegions(theme[2],n+1)});
 }
 
 const progressKey='musas-colour-world-progress-v1';
@@ -625,12 +521,31 @@ if(id==='fish')og.insertAdjacentHTML('beforeend','<g><circle cx="280" cy="270" r
 if(id==='rocket')og.insertAdjacentHTML('beforeend','<g><circle cx="400" cy="230" r="33" fill="#dff5ff" stroke="#273047" stroke-width="5"/></g>');
 if(id==='flower')og.insertAdjacentHTML('beforeend','<g class="detail"><path d="M405 440 q80 -55 100 0 q-60 50 -100 0 M400 485 q-75 -55 -100 0 q55 50 100 0"/></g>');
 if(id==='castle')og.insertAdjacentHTML('beforeend','<g class="detail"><path d="M235 195 v-35 M565 195 v-35 M370 270 v-30 M430 270 v-30"/><rect x="235" y="260" width="45" height="55" rx="20" fill="#fff" stroke="#273047" stroke-width="4"/><rect x="520" y="260" width="45" height="55" rx="20" fill="#fff" stroke="#273047" stroke-width="4"/></g>');
-if(page.kind==='creature')og.insertAdjacentHTML('beforeend','<g class="detail"><circle cx="365" cy="265" r="9" fill="#273047"/><circle cx="435" cy="265" r="9" fill="#273047"/><path d="M385 305 Q400 320 415 305" stroke="#273047" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="400" cy="290" rx="9" ry="6" fill="#273047"/></g>');
-if(page.kind==='winged')og.insertAdjacentHTML('beforeend','<g class="detail"><circle cx="392" cy="270" r="5" fill="#273047"/><circle cx="408" cy="270" r="5" fill="#273047"/><path d="M395 290 Q400 296 405 290" stroke="#273047" stroke-width="3" fill="none" stroke-linecap="round"/></g>');
-if(page.kind==='plant')og.insertAdjacentHTML('beforeend','<g class="detail"><path d="M400 100 l0 40 M300 245 q35 25 55 5 M500 245 q-35 25 -55 5" stroke="#273047" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="400" cy="210" r="7" fill="#273047"/></g>');
-if(page.kind==='building')og.insertAdjacentHTML('beforeend','<g class="detail"><rect x="245" y="300" width="42" height="55" rx="18" fill="#dff5ff" stroke="#273047" stroke-width="4"/><rect x="515" y="300" width="42" height="55" rx="18" fill="#dff5ff" stroke="#273047" stroke-width="4"/><path d="M400 440 v90" stroke="#273047" stroke-width="4"/></g>');
-if(page.kind==='ride')og.insertAdjacentHTML('beforeend','<g class="detail"><circle cx="400" cy="255" r="22" fill="#dff5ff" stroke="#273047" stroke-width="4"/><path d="M380 335 h40" stroke="#273047" stroke-width="4" stroke-linecap="round"/></g>');
-if(page.kind==='treat')og.insertAdjacentHTML('beforeend','<g class="detail"><path d="M345 315 l20 12 M450 315 l20 12 M385 355 l20 10" stroke="#273047" stroke-width="5" stroke-linecap="round"/></g>');
+// Natural-history style engraving details: fine contours, fur/scale marks, feather
+// barbs and botanical veins. These are outline-only so every paint region stays fillable.
+const ink='#273047';
+if(page.kind==='creature'){
+ const marks=[];
+ for(let j=0;j<9;j++){const y=210+j*23;marks.push('M '+(305+(j%3)*13)+' '+y+' q 22 -13 42 0','M '+(455-(j%3)*11)+' '+(y+3)+' q 20 -13 39 0')}
+ for(let j=0;j<6;j++){const x=345+j*22;marks.push('M '+x+' 390 q -9 16 0 28')}
+ og.append(svgEl('path',{d:marks.join(' '),class:'detail','stroke-width':2.5,opacity:.8}));
+ og.append(svgEl('path',{d:'M300 225 Q400 165 500 225 M315 345 Q400 385 485 345 M320 455 Q400 485 480 455',class:'detail','stroke-width':2.6,opacity:.75}));
+}
+if(page.kind==='winged'){
+ const feather=[];for(let j=0;j<7;j++){const y=175+j*24;feather.push('M 400 '+y+' Q 320 '+(y-35)+' 235 '+(y+8),'M 400 '+y+' Q 480 '+(y-35)+' 565 '+(y+8))}
+ og.append(svgEl('path',{d:feather.join(' '),class:'detail','stroke-width':2.4,opacity:.85}));
+ og.append(svgEl('path',{d:'M400 205 Q370 260 400 320 Q430 260 400 205 M400 320 Q350 365 300 410 M400 320 Q450 365 500 410',class:'detail','stroke-width':2.5}));
+}
+if(page.kind==='plant'){
+ const veins=[];for(let j=0;j<7;j++){const y=175+j*28;veins.push('M400 '+y+' q -42 -28 -78 -8','M400 '+y+' q 42 -28 78 -8')}
+ og.append(svgEl('path',{d:veins.join(' '),class:'detail','stroke-width':2.6,opacity:.85}));
+ og.append(svgEl('path',{d:'M400 90 V510 M400 250 Q345 215 300 245 M400 315 Q455 275 505 300',class:'detail','stroke-width':3}));
+}
+if(page.kind==='building'||page.kind==='ride'){
+ const technical=page.kind==='ride'?'M250 360 H550 M300 385 H500 M330 220 L390 175 H520 M270 430 H530 M300 455 H500':'M230 285 H570 M230 330 H570 M230 375 H570 M230 420 H570 M300 185 V500 M500 185 V500';
+ og.append(svgEl('path',{d:technical,class:'detail','stroke-width':2.7,opacity:.8}));
+ for(let x=270;x<=530;x+=65)for(let y=300;y<=430;y+=65)og.append(svgEl('rect',{x,y,width:24,height:34,fill:'none',stroke:ink,'stroke-width':2.5,rx:2}));
+}
 strokes=[];undoStack=[];redoStack=[];selected=null;celebrationShown=false;hideCelebration();loadPainting(id);renderStrokes()}
 function eraseRegion(el){if(!el)return;const name=el.id.replace('region-','');if(!name)return;const wasColoured=(el.getAttribute('fill')||'').toLowerCase()!=='#ffffff'||strokes.some(x=>x.region===name);if(!wasColoured)return;el.setAttribute('fill','#ffffff');strokes=strokes.filter(x=>x.region!==name);renderStrokes();celebrationShown=false;saveCurrentPainting()}
 function regionAtPoint(e){const p=point(e),all=[...document.querySelectorAll('#regions .region')];for(let i=all.length-1;i>=0;i--){try{if(all[i].isPointInFill(p))return all[i]}catch(err){}}return null}
